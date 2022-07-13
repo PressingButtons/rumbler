@@ -1,0 +1,23 @@
+{
+  "name": "rumbler",
+  "version": "1.0.0",
+  "description": "browser arena game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PressingButtons/rumbler.git"
+  },
+  "keywords": [
+    "rumbler",
+    "arachnidjs"
+  ],
+  "author": "Steven Boyd",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PressingButtons/rumbler/issues"
+  },
+  "homepage": "https://github.com/PressingButtons/rumbler#readme"
+}
