@@ -1,11 +1,7 @@
 import '../ArachnidJS/lib.js';
+import './modules/game/game.js';
 
 window.onload = event => {
   window.gl = document.getElementById('game').getContext('webgl', {premultipliedAlpha: false});
-  console.log(Arachnid)
-  Arachnid.compileWebGL(gl, './shaders/config.json').then(test);
-}
-
-const test = shaders => {
-  console.log(shaders);
+  Arachnid.compileWebGL(gl, './shaders/config.json').then(Game.main);
 }
