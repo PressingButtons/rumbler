@@ -1,0 +1,6 @@
+{
+  "basic" : {
+    "vertex" : "./shaders/src/basic_vertex.glsl",
+    "fragment" : "./shaders/src/basic_fragment.glsl"
+  }
+}
