@@ -1,0 +1,46 @@
+{
+  "Rumbler": {
+    "properties": {
+      "width": "numeric",
+      "height": "numeric",
+      "name": "alphanumeric"
+    },
+    "meta": {
+      "walk_speed": "numeric",
+      "run_speed":  "numeric",
+      "dash_speed": "numeric",
+      "jump_force": "numeric",
+      "jump_count": "numeric",
+      "stamina":    "numeric",
+      "vitality":   "numeric",
+      "fatigue":    "numeric",
+      "endurance":  "numeric",
+      "stun":       "numeric"
+    }
+  },
+  "Projectile": {
+    "properties": {
+      "width": "numeric",
+      "height": "numeric",
+      "name": "alphanumeric"
+    },
+    "meta": {
+      "speed":    "numeric",
+      "lifetime": "numeric",
+      "vitality": "numeric",
+      "power":    "numeric",
+      "traits":   "array",
+      "gravity":  "boolean"
+    }
+  },
+  "VFX": {
+    "properties": {
+      "width": "numeric",
+      "height": "numeric",
+      "name": "alphanumeric"
+    },
+    "meta": {
+      "lifetime": "numeric",
+    }
+  }
+}

@@ -12,10 +12,10 @@ export default class WorldRun extends Arachnid.State {
     const dt = timestamp - this.#lastStep;
     this.#lastStep = timestamp;
     //update data
-    this.world.update(dt);
+    this.host.update(dt);
     //loop bool
     if(!this.#norepeat)
-    this.#step = requestAnimationFrame(update);
+    this.#step = requestAnimationFrame(this.#updateWorld.bind(this));
   }
 
   enterState( ) {

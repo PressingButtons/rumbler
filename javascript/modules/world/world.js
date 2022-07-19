@@ -4,7 +4,7 @@ import Camera from './camera.js';
 
 export default class World extends Arachnid.State {
 
-  #objects;
+  #objects = [];
   #camera = new Camera( );
 
   constructor(config) {
