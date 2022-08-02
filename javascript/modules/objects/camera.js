@@ -1,9 +1,9 @@
-export function Camera(config, buffer = null) {
+function Camera(aspect, min, max, scaling) {
 
   let x = 0;
   let y = 0;
-  let width = config.sizeConstraints[0];
-  let height = config.sizeConstraints[1];
+  let width = min[0]
+  let height = min[1]
 
   function center(...objects) {
     let minx, miny, maxx, maxy;
@@ -20,12 +20,12 @@ export function Camera(config, buffer = null) {
 
 
   function resize(w = 0, h = 0) {
-    width = Math.floor(w / config.aspect[0]) * config.aspect[0];
-    height = Math.floor(h / config.aspect[1]) * config.aspect[1];
-    if(width < config.sizeConstraints[0]) width = config.sizeConstraints[0];
-    if(width > config.sizeConstraints[2]) width = config.sizeConstraints[2];
-    if(height < config.sizeConstraints[1]) height = config.sizeConstraints[1];
-    if(height > config.sizeConstraints[3]) height = config.sizeConstraints[3];
+    width = Math.floor(w / aspect[0]) * aspect[0];
+    height = Math.floor(h / aspect[1]) * aspect[1];
+    if(width < min[0]) width = min[0];
+    if(width > max[0]) width = max[0];
+    if(height < min[1]) height = min[1];
+    if(height > max[1]) height = max[1];
   }
 
   function projection( ) {
@@ -41,8 +41,14 @@ export function Camera(config, buffer = null) {
 
   function setX(n) {
     x = n;
-    if(this.left < 0) left = 0;
-    if(this.right > config.sizeConstraints[2]) this.right = config.sizeConstraints
+    if(this.left < 0) this.left = 0;
+    if(this.right > max[0]) this.right = max[0]
+  }
+
+  function setY(n) {
+    y = n;
+    if(this.top < 0) this.top = 0;
+    if(this.bottom > max[1]) this.bottom = max[1];
   }
 
   return {
@@ -65,3 +71,5 @@ export function Camera(config, buffer = null) {
   }
 
 }
+
+export default new Camera([16, 9], [640, 360], [1280, 720], [1, 2]);

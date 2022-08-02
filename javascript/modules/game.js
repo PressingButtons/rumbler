@@ -1,5 +1,6 @@
 import * as GameMap from './objects/gamemap.js';
 import * as GameRender from './system/render.js';
+import Camera from './objects/camera.js';
 
 let shaders;
 
