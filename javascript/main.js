@@ -1,7 +1,18 @@
 import '../ArachnidJS/lib.js';
-import './modules/game/game.js';
+import * as Game from './modules/game.js';
+import preload from './preload.js';
 
 window.onload = event => {
-  window.gl = document.getElementById('game').getContext('webgl', {premultipliedAlpha: false});
-  Arachnid.compileWebGL(gl, './shaders/config.json').then(Game.main);
+
+  const gl = document.getElementById('game').getContext('webgl', {premultipliedAlpha: false});
+
+  preload(gl).then(main);
+
+  async function main(pkg) {
+    console.log(pkg);
+    pkg.gl = gl;
+    pkg.shaders = await Arachnid.compileWebGL(pkg.gl, './shaders/config.json');
+    await Game.init(pkg);
+  }
+
 }

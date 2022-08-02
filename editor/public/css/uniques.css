@@ -1,3 +1,36 @@
 #glCanvas {
   flex:1;
 }
+
+section {
+  background: var(--panel-color);
+}
+
+.tiles {
+}
+
+.tiles main {
+  flex: 1;
+}
+
+.tiles section.workspace {
+  flex: 1;
+}
+
+.tiles main .command {
+  width: 400px;
+  min-width: 0;
+  min-width: 0;
+}
+
+.tiles sub {
+
+}
+
+.tiles section.sprites {
+  width: calc(((128px * 2) + 10px + 32px));
+}
+
+.tiles section .content {
+  background: var(--bg-color);
+}

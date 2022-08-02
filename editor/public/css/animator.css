@@ -1,0 +1,21 @@
+.animator.workspace{
+  flex: 1;
+  min-width: 650px;
+}
+
+.animator .preview {
+  background: #222;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.animator .preview canvas {
+  background: black;
+  height: 100%;
+  aspect-ratio: 16/9;
+}
+
+.timeline .tools {
+  border-bottom: 1px solid black;
+}

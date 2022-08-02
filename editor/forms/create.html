@@ -1,0 +1,41 @@
+<exp>
+<form class="" id='createform'>
+  <h1>Create Object</h1>
+  <div class="flex">
+    <p>Object Type</p>
+    <select class="" name="objectType"></select>
+  </div>
+  <div class="content">
+  <table>
+    <tr>
+      <td>Object Name</td>
+      <td><input type="text" name="name" required autocomplete="off"></input></td>
+    </tr>
+    <tr>
+      <td>Width(px)</td>
+      <td><input type="text" name="width" value="" pattern="[0-9]{1,4}" title="4 digit number" required autocomplete="off"></td>
+    </tr>
+    <tr>
+      <td>Height(px)</td>
+      <td><input type="text" name="height" value="" pattern="[0-9]{1,4}" title="4 digit number" required autocomplete="off"></td>
+    </tr>
+  </table>
+</div>
+<div class="buttons">
+  <button type="submit" name="button">Submit</button>
+</div>
+</form>
+</exp>
+
+<exp>
+  fetch('/public/templates.json')
+  .then(res => res.json( ))
+  .then(templates => {
+    for(var t in templates) {
+      const option = document.createElement('option');
+      option.value = t;
+      option.innerHTML = t;
+      element.querySelector('select[name="objectType"]').append(option);
+    }
+  });
+</exp>

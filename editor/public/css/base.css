@@ -1,18 +1,99 @@
+:root {
+  --bg-color: #121212;
+  --panel-color: #304050;
+  --font-color: #E0E5EF;
+}
+
 html, body, div {
   padding: 0;
   margin: 0;
 }
 
-html, body, .full {
+html, body, .full, .overpane {
   width: 100%;
   height: 100%;
 }
 
 body {
   font-family: Verdana, sans-serif;
+  overflow: hidden;
+  background: var(--bg-color);
+  color: var(--font-color);
 }
 
-p, h1, h2, h3, h4, h5, h6 {
+p, h1, h2, h3, h4, h5, h6, td {
   padding: 6px;
   margin: 0;
+}
+
+table, button, input {
+  margin: 6px;
+}
+
+div {
+  min-width: 0;
+  min-height: 0;
+}
+
+section {
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 1px 1px 1px 0px;
+}
+
+section header {
+  padding: 12px;
+  font-size: 1.2em;
+}
+
+section .content {
+  flex: 1;
+  margin: 0px 16px 16px 16px;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+
+.overpane {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+}
+
+.flex, .overpane.show, .wrapper {
+  display: flex;
+}
+
+.flex.spaced {
+  justify-content: space-between;
+}
+
+.flex.col {
+  flex-flow: column nowrap;
+}
+
+.grow {
+  flex: 1;
+}
+
+.view-container {
+  width: 100%;
+  height: 100%;
+  background: none;
+}
+
+.view-container canvas {
+}
+
+.wrapper {
+  height: 100vh;
+  width: 100vw;
+}
+
+.wrapper > div:not(:last-child) {
+  margin: 1px;
 }

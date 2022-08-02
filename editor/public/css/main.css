@@ -1,4 +1,5 @@
 @import './base.css';
-@import './grid.css';
 @import './uniques.css';
-@import './colors.css';
+@import './animator.css';
+@import './timeline.css';
+@import './form.css';

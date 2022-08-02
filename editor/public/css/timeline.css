@@ -1,0 +1,35 @@
+#timeline {
+  min-width: 0;
+  min-height: 0;
+}
+
+#timeline .rail {
+  overflow: auto;
+  display: flex;
+}
+
+.frame {
+  background: #EEE;
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
+  color: black;
+  border-radius: 5px;
+  padding: 8px;
+  margin: 2px;
+}
+
+.frame div {
+  padding: 3px;
+  justify-content: center;
+}
+
+.frame span:first-child {
+  margin: 6px
+}
+
+.frame .cell {
+  border-bottom: 1px solid black;
+}
+
+.frame .centered {
+  justify-content: center;
+}

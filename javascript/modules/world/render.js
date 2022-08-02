@@ -1,4 +1,5 @@
 let currentShader = null;
+let gamescreen = null;
 
 export default function Render(world) {
   clear(world.backgroundColor);

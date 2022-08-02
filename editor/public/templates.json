@@ -40,7 +40,7 @@
       "name": "alphanumeric"
     },
     "meta": {
-      "lifetime": "numeric",
+      "lifetime": "numeric"
     }
   }
 }
