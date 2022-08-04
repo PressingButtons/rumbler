@@ -1,4 +1,4 @@
-const transformBuffer = new Float32Array(48);
+const transformBuffer = new ArrayBuffer(48 * Float32Array.BYTES_PER_ELEMENT);
 const transforms = [
   new Float32Array(transformBuffer, 0, 16),
   new Float32Array(transformBuffer, 16, 16),
@@ -7,16 +7,14 @@ const transforms = [
 
 let tiles = new Arachnid.Texture( );
 let layers = [null, null, null];
-let m4;
-let bgColor = '#000';
+let bgColor;
 let skybox = {status: 0, texture: new Arachnid.Texture( )};
+let m4, buffer;
 
 export function init(gl) {
   m4 = glMatrix.mat4 || mat4;
-  if(!m4) {
-    console.trace( );
-    throw `Error, glMatrix(mat4) Library not found. Cannot perform matrix operations.`;
-  }
+  if(!m4) GameSystem.sendError(null, GameSystem.ErrorMessages.GLMATRIX_NOT_DEFINED);
+  buffer = GameSystem.createGlBuffer(gl, GameSystem.bufferData.textureSquare);
   return tiles.load(gl, './images/tiles.webp');
 }
 
@@ -25,7 +23,7 @@ export async function load(gl, name) {
   transforms.forEach(t => m4.identity(t));
   const data = await Arachnid.Getters.getJSON(`./data/stages/${name}.json`);
   await setLayers(gl, data.layers);
-  bgColor = data.backgroundColor || "#000";
+  bgColor = data.backgroundColor || null;
   if(data.background) await skybox.load(data.background);
 }
 
@@ -38,7 +36,10 @@ export function adjustLayer(index, position) {
 export function getMap( ) {
   //transforms
   setTransforms( );
-  let pkg = { tiles: tiles, layers: [], backgroundColor: bgColor, skybox: skybox }
+  let pkg = {
+    tiles: tiles, layers: [], backgroundColor: bgColor, skybox: skybox, buffer: buffer,
+    scaling: [1280, 720, 1]
+  }
   for(let i = 0; i < layers.length; i++) {
     if(!layers[i]) break;
     pkg.layers.push(Object.assign({}, layers[i], {transform: transforms[i]}));
@@ -52,8 +53,8 @@ async function setLayers(gl, layerURLs) {
   for(let i = 0; i < layers.length; i++) {
     if(!layerURLs[i]) break;
     const map = new Arachnid.Texture( );
-    map.load(gl, layerURLs[i]);
-    layers[i] = {map: map, x: 0, y: 0, tint: [0, 0, 0, depth]};
+    await map.load(gl, layerURLs[i]);
+    layers[i] = {map: map, x: 0, y: 0, tint: [1 - depth, 1 - depth, 1 - depth, 1]};
     depth += 0.15;
   }
 }

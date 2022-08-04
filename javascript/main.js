@@ -1,4 +1,5 @@
 import '../ArachnidJS/lib.js';
+import './modules/system/sysmain.js';
 import * as Game from './modules/game.js';
 import preload from './preload.js';
 

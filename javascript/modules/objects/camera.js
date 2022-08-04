@@ -1,9 +1,9 @@
 function Camera(aspect, min, max, scaling) {
 
-  let x = 0;
-  let y = 0;
-  let width = min[0]
-  let height = min[1]
+  let x = min[0]/2;
+  let y = min[1]/2;
+  let width = min[0];
+  let height = min[1];
 
   function center(...objects) {
     let minx, miny, maxx, maxy;
@@ -28,15 +28,15 @@ function Camera(aspect, min, max, scaling) {
     if(height > max[1]) height = max[1];
   }
 
-  function projection( ) {
+  function calcProjection( ) {
     //requires glMatrix Library
     const m4 = glMatrix.mat4 || mat4;
-    if(!m4) {
-      console.trace( );
-      throw "Error - glMatrix library (mat4) not found.";
-    }
-    matrix = buffer ? m4.identity(buffer) : m4.create( );
-    return m4.ortho(matrix, x, x + width, y + height, y, 1, -1);
+    if(!m4) GameSystem.sendError(GameSystem.ErrorMessages.GLMATRIX_NOT_DEFINED);
+    const canvas = document.getElementById('game');
+    const scale = [max[0] / width, max[1] / height, 1];
+    const ortho = m4.ortho(GameSystem.bufferData.projection, 0, this.width, this.height, 0, -1, 1);
+    const trans = m4.fromRotationTranslationScale(GameSystem.bufferData.transform, [0, 0, 0, 0], [this.left, this.top, 0], scale);
+    return m4.mul(GameSystem.bufferData.work, ortho, trans);
   }
 
   function setX(n) {
@@ -47,29 +47,30 @@ function Camera(aspect, min, max, scaling) {
 
   function setY(n) {
     y = n;
-    if(this.top < 0) this.top = 0;
-    if(this.bottom > max[1]) this.bottom = max[1];
+    //if(this.top < 0) this.top = 0;
+    //if(this.bottom > max[1]) this.bottom = max[1];
   }
 
   return {
-    get left( ) { return x - width * 0.5; },
-    set left(n) { x = n + width * 0.5; },
-    get right( ) { return x + width * 0.5; },
-    set right(n) { x = n - width * 0.5; },
-    get up( ) { return y - height * 0.5; },
-    set up(n) { y = n + height * 0.5; },
-    get down( ) { return y + height * 0.5; },
-    set down(n) { y = n - height * 0.5; },
-    get width( ) {return width},
+    get left( )   { return x - width * 0.5; },
+    set left(n)   { x = n + width * 0.5; },
+    get right( )  { return x + width * 0.5; },
+    set right(n)  { x = n - width * 0.5; },
+    get top( )    { return y - height * 0.5; },
+    set top(n)    { y = n + height * 0.5; },
+    get bottom( ) { return y + height * 0.5; },
+    set bottom(n) { y = n - height * 0.5; },
+    get width( )  {return width},
     get height( ) {return height},
     get x( ) {return x},
-    set x(n) {setX(n)},
+    set x(n) {setX.call(this, n)},
     get y( ) {return y},
-    set y( ) {setY(n)},
-    projection: projection,
+    set y(n) {setY.call(this, n)},
+    get projection( ) {
+      return calcProjection.call(this);
+    },
     resize: resize
   }
-
 }
 
 export default new Camera([16, 9], [640, 360], [1280, 720], [1, 2]);

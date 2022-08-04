@@ -6,5 +6,9 @@
   "gameTexture" : {
     "vertex" : "./shaders/src/basic_vertex.glsl",
     "fragment" : "./shaders/src/gametexture_fragment.glsl"
+  },
+  "tiles": {
+    "vertex" : "./shaders/src/tiles_vertex.glsl",
+    "fragment" : "./shaders/src/tiles_fragment.glsl"
   }
 }

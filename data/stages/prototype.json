@@ -1,6 +1,6 @@
 {
   "name": "proto-arena",
-  "backgroundColor": "#AAA",
-  "background" : null,
+  "backgroundColor": [0.8, 0.8, 0.8, 1],
+  "skybox" : null,
   "layers": ["./images/stage_test.webp"]
 }

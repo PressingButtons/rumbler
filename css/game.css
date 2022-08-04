@@ -14,9 +14,13 @@ body {
 
 canvas {
   image-rendering: pixelated;
+  display: block;
 }
 
 .game {
   background: black;
-  transform: scale(3);
+}
+
+#game {
+
 }
