@@ -14,8 +14,7 @@ GameMapLayer.prototype.reset = function( ) {
 GameMapLayer.prototype.load = async function(gl, url, tiles, depth) {
   const map = await Arachnid.Loaders.loadImage(url);
   const src = createTileImage(map, tiles);
-  let image = await Arachnid.Loaders.loadImage(src.toDataURL('image/webp', 0));
-  await this.texture.load(gl, src.toDataURL('image/webp', 1));
+  await this.texture.useImage(gl, src);
 }
 
 const createTileImage = function(map, tiles) {

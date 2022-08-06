@@ -1,6 +1,5 @@
-export function loadImage(url) {
+export function loadImage(url, image = new Image( )) {
   return new Promise(function(resolve, reject) {
-    let image = new Image( );
     image.onload = event => {
       resolve(image);
     }

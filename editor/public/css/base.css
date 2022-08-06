@@ -54,6 +54,10 @@ section .content {
   overflow: auto;
 }
 
+article {
+
+}
+
 
 .overpane {
   display: none;
@@ -81,12 +85,14 @@ section .content {
 }
 
 .view-container {
-  width: 100%;
-  height: 100%;
-  background: none;
+  background: white;
+  position: relative;
 }
 
-.view-container canvas {
+.view-container svg {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .wrapper {
