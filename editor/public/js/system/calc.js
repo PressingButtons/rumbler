@@ -11,11 +11,11 @@ export function tileCrop(cells) {
   let min = [null, null], max = [null, null];
   for(const value in cells) {
     let rect = tileRect(value);
-    if(!min[0] || min[0] > rect.x) min[0] = rect.x;
-    if(!min[1] || min[1] > rect.y) min[1] = rect.y;
+    if(min[0] == null || min[0] > rect.x) min[0] = rect.x;
+    if(min[1] == null || min[1] > rect.y) min[1] = rect.y;
     //===========================================//
-    if(!max[0] || max[0] < rect.x + rect.width) max[0] = rect.x + rect.width;
-    if(!max[1] || max[1] < rect.y + rect.height) max[1] = rect.y + rect.height;
+    if(max[0] == null || max[0] < rect.x + rect.width) max[0] = rect.x + rect.width;
+    if(max[1] == null || max[1] < rect.y + rect.height) max[1] = rect.y + rect.height;
   }
   return {x: min[0], y: min[1], width: max[0] - min[0], height: max[1] - min[1]};
 }
