@@ -12,7 +12,6 @@ const setEditor = { };
 setEditor.tile = async function( ) {
   System.Editor = new TileEditor();
   await System.Editor.init(
-    document.getElementById('stamper'),
     document.querySelector('.tileset svg'),
     document.querySelector('.tilemap')
   );

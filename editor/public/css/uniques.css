@@ -2,8 +2,8 @@
   flex:1;
 }
 
-#stamper {
-  border: 1px solid red;
+#stamper canvas{
+  border: 2px solid red;
 }
 
 section {
@@ -76,29 +76,13 @@ div.canvasLayers canvas {
   height: 100%;
 }
 
+.tilemap {
+  cursor: crosshair;
+}
+
 .tilemap img {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-
-#stamper {
-  position: absolute;
-  top:0;
-  left:0;
-  border: 1px solid red;
-  visibility: hidden;
-}
-
-#stamper.show {
-  visibility: visible;
-}
-
-#sprites canvas {
-  border: 1px solid transparent;
-}
-
-#sprites canvas:hover {
-  border-color: red;
 }

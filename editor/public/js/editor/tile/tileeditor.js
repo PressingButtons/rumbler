@@ -1,4 +1,4 @@
-import Stamper from './stamper.js';
+import MapEditor from './mapeditor.js'
 import TileSelector from './tileselector.js';
 import Tilemap from './tilemap.js'
 
@@ -10,17 +10,13 @@ export default class TileEditor extends EventTarget {
     super( );
   }
 
-  async init(stampCanvas, tileselctorSVG, tilemapContainer) {
-    this.tilemapContainer = tilemapContainer;
-    this.stamper = new Stamper(stampCanvas);
+  async init(tileselctorSVG, tilemapContainer) {
+    this.mapeditor = new MapEditor(tilemapContainer);
+    //this.mapeditor.addEventListener('tileselection', this.#onTileSelection.bind(this));
     this.tileselector = new TileSelector(tileselctorSVG);
-    this.stamper.addEventListener('stamped', this.#onTilemapUpdate.bind(this));
-    this.tileselector.addEventListener('stamp_data', this.#onStampData.bind(this));
+    this.tileselector.addEventListener('tileselection', this.#onTileSelection.bind(this));
     this.#data = await System.getJSON('/data/stages.json');
     this.refreshTiles( );
-    this.create('Untitled');
-    this.delete('NewName');
-    this.save( )
   }
 
   create(name) {
@@ -56,12 +52,17 @@ export default class TileEditor extends EventTarget {
 
   //private
 
-  #onStampData(event) {
-
+  #onTileSelection(event) {
+    this.mapeditor.setStampData(TileEditor.tileset, event.detail);
   }
 
   #onTilemapUpdate(event) {
 
+  }
+
+  //
+  static get tileset( ) {
+    return document.getElementById('tileset');
   }
 
 }

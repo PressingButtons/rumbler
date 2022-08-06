@@ -6,19 +6,21 @@ export default class Stamper extends EventTarget {
   constructor(stamper) {
     super( );
     this.#stamper = stamper;
+    this.#stamper.setAttribute('stroke', 'red');
+    this.clear( );
   }
 
   clear( ) {
     this.#values = null;
-    this.#stamper.width = 16;
-    this.#stamper.height = 16;
+    this.#stamper.setAttribute('width', 16);
+    this.#stamper.setAttribute('height', 16);
   }
 
   drawTile(image, cells) {
     const rect = System.calc.tileCrop(cells);
-    this.stamper.width = rect.width;
-    this.stamper.height = rect.height;
-    this.stamper.ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
+    this.#stamper.width = rect.width;
+    this.#stamper.height = rect.height;
+    this.#stamper.querySelector('canvas').ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
   }
 
   hide( ) {
@@ -26,15 +28,15 @@ export default class Stamper extends EventTarget {
   }
 
   move(position) {
-    this.#stamper.css.top = postion.row * System.TILESIZE;
-    this.#stamper.css.left = position.col * System.TILESIZE;
+    this.#stamper.setAttribute('y', position.row * System.TILESIZE);
+    this.#stamper.setAttribute('x', position.col * System.TILESIZE);
   }
 
   show( ) {
     this.#stamper.style.visibility = 'visible'
   }
 
-  setValues(values, image) {
+  setValues(image, values) {
     this.#values = values;
     this.#cropImage(values, image);
   }
@@ -52,16 +54,21 @@ export default class Stamper extends EventTarget {
   /// private methods
 
   #cropImage(values, image) {
-    const rect = getRect(values);
-    drawRect(this.#stamper, rect);
+    const rect = System.Calc.tileCrop(values);
+    resizeStamp(this.#stamper, rect);
+    drawValues(this.#stamper.querySelector('canvas').getContext('2d'), image, values, rect);
   }
 }
 
-function drawRect(canvas, rect) {
-  const ctx = canvas.getContext('2d');
-  canvas.width = rect.x2 - rect.x1;
-  canvas.height = rect.y2 - rect.y1;
+function drawValues(ctx, image, values, rect) {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  for(const index in values) drawTile(ctx, image, index, rect);
+}
 
+function drawTile(ctx, image, value, rect) {
+  const tile = System.Calc.tileRect(value);
+  console.log(tile, rect);
+  ctx.drawImage(image, tile.x, tile.y, tile.width, tile.height, tile.x - rect.x, tile.y - rect.y, tile.width, tile.height);
 }
 
 function getRect(values) {
@@ -72,4 +79,9 @@ function getRect(values) {
     x2: values[values.length - 1][values[values.length - 1].length - 1] * System.TILESIZE + System.TILESIZE,
     y2: values[values.length - 1] * System.TILESIZE + System.TILESIZE
   }
+}
+
+function resizeStamp(stamp, rect) {
+  stamper.setAttribute('width', rect.width);
+  stamper.setAttribute('height', rect.height);
 }

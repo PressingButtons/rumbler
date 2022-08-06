@@ -1,10 +1,13 @@
+import Stamper from './stamper.js';
+
 export default class MapEditor extends EventTarget {
 
-  constructor( ) {
+  constructor(container) {
     super( );
+    this.#init(container);
   }
 
-  init(container) {
+  #init(container) {
     this.#bindMouseListener(container.querySelector('rect#listener'));
     this.stamper = new Stamper(container.querySelector('#stamper'));
     this.canvases = container.querySelector('#canvasLayers');
@@ -13,6 +16,7 @@ export default class MapEditor extends EventTarget {
 
   //private
   #bindMouseListener(element) {
+    element.onmouseover = this.#onmouse.bind(this);
     element.onmousemove = this.#onmouse.bind(this);
     element.onmousedown = this.#onmouse.bind(this);
     element.onmouseup   = this.#onmouse.bind(this);
@@ -22,6 +26,7 @@ export default class MapEditor extends EventTarget {
   #onmouse(event) {
     const position = System.Calc.mousePosition(event);
     switch(event.type) {
+      case "mouseover": this.#onmouseover(position); break;
       case "mousemove": this.#onmousemove(position); break;
       case "mousedown": this.#onmousedown(position); break;
       case "mouseup":   this.#onmouseup(position); break;
@@ -29,8 +34,11 @@ export default class MapEditor extends EventTarget {
     }
   }
 
-  #onmousemove(position) {
+  #onmouseover(position) {
     this.stamper.show( );
+  }
+
+  #onmousemove(position) {
     this.stamper.move(position);
   }
 
@@ -44,6 +52,11 @@ export default class MapEditor extends EventTarget {
 
   #onmouseout(position) {
     this.stamper.hide( );
+  }
+
+  //public
+  setStampData(image, data) {
+    this.stamper.setValues(image, data);
   }
 
 }

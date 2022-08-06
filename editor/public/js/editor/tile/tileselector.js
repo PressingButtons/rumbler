@@ -84,7 +84,7 @@ export default class TileSelector extends EventTarget {
   }
 
   #releaseData( ) {
-    this.dispatchEvent(new CustomEvent('stamp_data', {detail: this.#cells}));
+    this.dispatchEvent(new CustomEvent('tileselection', {detail: this.#cells}));
   }
 
   #setCell(container, cells, name) {
