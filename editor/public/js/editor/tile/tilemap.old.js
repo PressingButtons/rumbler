@@ -1,3 +1,5 @@
+import TileLayer from '.tilelayer.js';
+
 export default class Tilemap {
 
   static WIDTH = 1280;

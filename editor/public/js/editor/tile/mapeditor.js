@@ -2,6 +2,8 @@ import Stamper from './stamper.js';
 
 export default class MapEditor extends EventTarget {
 
+  #active = false;
+
   constructor(container) {
     super( );
     this.#init(container);
@@ -24,7 +26,7 @@ export default class MapEditor extends EventTarget {
   }
 
   #onmouse(event) {
-    const position = System.Calc.mousePosition(event);
+    const position = System.calc.mousePosition(event);
     switch(event.type) {
       case "mouseover": this.#onmouseover(position); break;
       case "mousemove": this.#onmousemove(position); break;
@@ -40,23 +42,40 @@ export default class MapEditor extends EventTarget {
 
   #onmousemove(position) {
     this.stamper.move(position);
+    if(this.#active) this.#sendStamp(position);
   }
 
   #onmousedown(position) {
-
+    this.#active = true;
+    this.#sendStamp(position);
   }
 
   #onmouseup(position) {
-
+    this.#active = false;
   }
 
   #onmouseout(position) {
+    this.#active = false;
     this.stamper.hide( );
   }
 
+  #sendStamp(position) {
+    const pkg = {
+      start: {row: position.row, col: position.col},
+      values: this.stamper.values
+    }
+  }
+
   //public
+  drawLayer(layer, canvas) {
+
+  }
+
+  onSelection(event) {
+    this.stamper.setValues(document.getElementById('tileset'), event.detail);
+  }
+
   setStampData(image, data) {
     this.stamper.setValues(image, data);
   }
-
 }

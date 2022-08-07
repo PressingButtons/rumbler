@@ -1,18 +1,13 @@
 import TileEditor from '../editor/tile/tileeditor.js';
 
-export async function loadEditor(type) {
+export default async function loadEditor(type) {
   await System.loadPage(type);
   setEditor[type]( );
 }
 
-
 const setEditor = { };
-
 
 setEditor.tile = async function( ) {
   System.Editor = new TileEditor();
-  await System.Editor.init(
-    document.querySelector('.tileset svg'),
-    document.querySelector('.tilemap')
-  );
+  await System.Editor.init( );
 }

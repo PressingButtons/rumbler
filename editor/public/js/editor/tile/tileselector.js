@@ -1,18 +1,19 @@
 export default class TileSelector extends EventTarget {
 
-  #body;
+  body;
   #isDown = false;
   #cells = { };
 
   constructor(svg) {
     super( );
-    this.#body = svg;
+    this.body = svg;
     this.#init( );
   }
 
 
   #init( ) {
-    this.#setListeners(this.#body.querySelector('#listener'));
+    this.#setListeners(this.body.querySelector('#listener'));
+    System.loadImage('/assets/stages/tiles.webp', document.getElementById('tileset'));
   }
 
   #setListeners(listener) {
@@ -24,17 +25,17 @@ export default class TileSelector extends EventTarget {
 
   #clearCells( ) {
     this.#cells = { };
-    const hilite = this.#body.querySelector('#hilite');
+    const hilite = this.body.querySelector('#hilite');
     while(hilite.firstChild) hilite.removeChild(hilite.firstChild);
   }
 
   #hideMarker(invisible = true) {
     let value = invisible ? 'none' : 'red';
-    this.#body.querySelector('#marker').setAttribute('stroke', value);
+    this.body.querySelector('#marker').setAttribute('stroke', value);
   }
 
   #hiliteCells( ) {
-    const hilite = this.#body.querySelector('#hilite');
+    const hilite = this.body.querySelector('#hilite');
     for(const cell in this.#cells) {
       this.#setCell(hilite, this.#cells, cell);
       this.#cells[cell] = true;
@@ -44,12 +45,12 @@ export default class TileSelector extends EventTarget {
   #moveMarker(position) {
     let y = position.row * System.TILESIZE;
     let x = position.col * System.TILESIZE;
-    this.#body.querySelector('#marker').setAttribute('x', x);
-    this.#body.querySelector('#marker').setAttribute('y', y);
+    this.body.querySelector('#marker').setAttribute('x', x);
+    this.body.querySelector('#marker').setAttribute('y', y);
   }
 
   #onmouseaction(event) {
-    const position = System.Calc.mousePosition(event);
+    const position = System.calc.mousePosition(event);
     switch(event.type) {
       case 'mousemove': this.#onMouseMove(position); break;
       case 'mousedown': this.#onMouseDown(position); break;
@@ -89,8 +90,8 @@ export default class TileSelector extends EventTarget {
 
   #setCell(container, cells, name) {
     if(cells[name]) return;
-    const config = System.Calc.tileRect(name);
-    const rect = System.createSVG('rect', "http://www.w3.org/2000/svg", config);
+    const config = System.calc.tileRect(name);
+    const rect = System.dom.createSVG('rect', "http://www.w3.org/2000/svg", config);
     container.append(rect);
     cells[name] = true;
   }

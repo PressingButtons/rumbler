@@ -52,11 +52,15 @@ export default class Stamper extends EventTarget {
   }
 
   /// private methods
-
   #cropImage(values, image) {
-    const rect = System.Calc.tileCrop(values);
+    const rect = System.calc.tileCrop(values);
     resizeStamp(this.#stamper, rect);
     drawValues(this.#stamper.querySelector('canvas').getContext('2d'), image, values, rect);
+  }
+
+  //
+  get values( ) {
+    return this.#values;
   }
 }
 
@@ -66,8 +70,7 @@ function drawValues(ctx, image, values, rect) {
 }
 
 function drawTile(ctx, image, value, rect) {
-  const tile = System.Calc.tileRect(value);
-  console.log(tile, rect);
+  const tile = System.calc.tileRect(value);
   ctx.drawImage(image, tile.x, tile.y, tile.width, tile.height, tile.x - rect.x, tile.y - rect.y, tile.width, tile.height);
 }
 

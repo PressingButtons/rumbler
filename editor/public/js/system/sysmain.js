@@ -1,27 +1,19 @@
+import * as ajax from './ajax.js';
+import * as calc from './calc.js';
+import * as dom  from './dom.js';
+import ContentFile from './contentfile.js';
+import {sendError} from './error.js'
 import {loadImage} from './loadimage.js';
-import {loadPage} from './loadpage.js';
-import {loadForm} from './loadform.js';
-import {loadEditor} from './loadeditor.js';
-import {getJSON} from './ajax.js';
-import {createContext2D, createSVG} from './dom.js';
-import {sendError} from './error.js';
-import {saveToLocalFile} from './savetolocal.js';
-import * as Calc from './calc.js';
 
 Object.defineProperty(window, "System", {
   value: {
-    getJSON: getJSON,
+    ajax: ajax,
+    calc: calc,
+    dom: dom,
     loadImage: loadImage,
-    loadPage: loadPage,
-    loadForm: loadForm,
-    loadEditor: loadEditor,
-    saveToLocalFile: saveToLocalFile,
-    createContext2D: createContext2D,
-    Calc: Calc,
-    createSVG: createSVG,
+    ContentFile: ContentFile,
     sendError: sendError,
-    project: null,
     Editor: null,
-    TILESIZE: 16
+    TILESIZE: 16, PIXEL_LENGTH: 4, MAP_COLUMNS: 80, MAP_ROWS: 45
   }
 });
