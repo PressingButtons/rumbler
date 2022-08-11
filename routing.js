@@ -57,6 +57,7 @@ module.exports = (path, express, app) => {
 
   app.use('/public', express.static(path.join(__dirname, '/editor/public')));
   app.use('/forms', express.static(path.join(__dirname, '/editor/forms')));
+  app.use('/system', express.static(path.join(__dirname, '/system/')));
   app.use('/code', express.static(path.join(__dirname, '/javascript')));
 
   //Getters

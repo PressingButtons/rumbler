@@ -35,6 +35,10 @@ div {
   min-height: 0;
 }
 
+foreignObject {
+  padding: 0;
+}
+
 section {
   display: flex;
   flex-flow: column nowrap;

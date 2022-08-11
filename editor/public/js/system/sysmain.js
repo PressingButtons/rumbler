@@ -3,17 +3,18 @@ import * as calc from './calc.js';
 import * as dom  from './dom.js';
 import ContentFile from './contentfile.js';
 import {sendError} from './error.js'
-import {loadImage} from './loadimage.js';
+import * as load from './loadimage.js';
 
 Object.defineProperty(window, "System", {
   value: {
     ajax: ajax,
     calc: calc,
     dom: dom,
-    loadImage: loadImage,
+    load: load,
     ContentFile: ContentFile,
     sendError: sendError,
     Editor: null,
-    TILESIZE: 16, PIXEL_LENGTH: 4, MAP_COLUMNS: 80, MAP_ROWS: 45
+    get MAP_WIDTH( ) {return System.TILESIZE * System.MAP_COLUMNS},
+    get MAP_HEIGHT( ) {return System.TILESIZE * System.MAP_ROWS}
   }
 });

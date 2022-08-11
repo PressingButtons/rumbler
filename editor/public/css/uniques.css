@@ -2,8 +2,12 @@
   flex:1;
 }
 
-#stamper canvas{
-  border: 2px solid red;
+#stamper {
+  position: absolute;
+}
+
+#stamper > * {
+  position: absolute;
 }
 
 section {

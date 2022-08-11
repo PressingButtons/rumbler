@@ -1,4 +1,5 @@
 import Stamper from './stamper.js';
+import MapRender from './maprender.js';
 
 export default class MapEditor extends EventTarget {
 
@@ -12,8 +13,30 @@ export default class MapEditor extends EventTarget {
   #init(container) {
     this.#bindMouseListener(container.querySelector('rect#listener'));
     this.stamper = new Stamper(container.querySelector('#stamper'));
-    this.canvases = container.querySelector('#canvasLayers');
+    this.render = new MapRender(container.querySelector('.canvasLayers'));
+    this.tilesrc = document.getElementById('tileset');
     this.body = container;
+  }
+
+  //public
+  drawMap(map) {
+    this.render.drawMap(this.tilesrc, map);
+  }
+
+  drawLayer(layer) {
+    this.render.drawLayer(this.tilesrc, layer);
+  }
+
+  drawPlot(layer, values) {
+    this.render.drawPlot(this.tilesrc, layer, values);
+  }
+
+  onSelection(event) {
+    this.stamper.setValues(document.getElementById('tileset'), event.detail);
+  }
+
+  setStampData(image, data) {
+    this.stamper.setValues(image, data);
   }
 
   //private
@@ -59,23 +82,21 @@ export default class MapEditor extends EventTarget {
     this.stamper.hide( );
   }
 
-  #sendStamp(position) {
-    const pkg = {
-      start: {row: position.row, col: position.col},
-      values: this.stamper.values
+  #packageValues(values, position) {
+    let pkg = { };
+    for(const index in values.keys) {
+      const tile = index.split(':').map( x => parseInt(x));
+      const cr = position.row + tile[0] - values.origin.row;
+      const cc = position.col + tile[1] - values.origin.col;
+      pkg[cr + ":" + cc] = index;
     }
+    return pkg;
   }
 
-  //public
-  drawLayer(layer, canvas) {
-
+  #sendStamp(position) {
+    if(!this.stamper.values) return;
+    const pkg = this.#packageValues(this.stamper.values, position);
+    this.dispatchEvent(new CustomEvent('stamp', {detail: pkg}));
   }
 
-  onSelection(event) {
-    this.stamper.setValues(document.getElementById('tileset'), event.detail);
-  }
-
-  setStampData(image, data) {
-    this.stamper.setValues(image, data);
-  }
 }

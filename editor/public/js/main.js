@@ -1,4 +1,4 @@
-import App from './editor/editorapp.js'
+import './editor/app/appmain.js'
 window.onload = async event => {
-  await App.loadEditor('tile');
+  await App.load.loadEditor('tile');
 }
