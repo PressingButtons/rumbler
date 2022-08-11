@@ -29,7 +29,6 @@ class Tilemap extends EventTarget {
     this.body = document.querySelector('.tilemap');
     this.svg = this.body.querySelector('.tilesvg');
     this.stamper = new Stamper(this.svg.querySelector('#stamper'))
-    this.#initCanvases(this.body.querySelector('.canvases'));
     this.#setMouseListeners(this.svg.querySelector('#listener'));
   }
 
@@ -48,12 +47,8 @@ class Tilemap extends EventTarget {
 
   ///private
   #initCanvases(container) {
-    this.canvases = [...container.querySelectorAll('canvas')].map((x, i) => {
-      let c = System.dom.create2DContext(System.MAP_WIDTH, System.MAP_HEIGHT, x);
-      let brightness = Math.min(15 * i + 70, 100);
-      c.filter = `brightness(${brightness}%)`;
-      return c;
-    });
+    const canvas = document.getElementById('tilemap_view');
+    this.ctx = System.dom.createContext('gl', System.MAP_WIDTH, System.MAP_HEIGHT, {premultipliedAlpha: false});
   }
 
   /// non-init
