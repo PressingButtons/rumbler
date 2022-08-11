@@ -5,7 +5,7 @@ export default function renderMap(tiles, canvases, layerdata, tilesize = 16) {
 
 const renderLayer = (tiles, ctx, layer, tilesize) => {
   for(let i = 0; i < layer.length; i += 4) {
-    const value = layer.subarray(i, i + 2).map(x => x * tilesize).reverse( );
+    const value = Array.from(layer.subarray(i, i + 2)).map(x => x * tilesize).reverse( );
     const coord = indexCoord(i, tilesize);
     ctx.clearRect(coord[0], coord[1], tilesize, tilesize);
     if(value[0] + value[1] == 0) continue;
