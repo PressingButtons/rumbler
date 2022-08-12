@@ -100,8 +100,7 @@ article {
 }
 
 .wrapper {
-  height: 100vh;
-  width: 100vw;
+  flex:1;
 }
 
 .wrapper > div:not(:last-child) {

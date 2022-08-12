@@ -14,6 +14,16 @@ section {
   background: var(--panel-color);
 }
 
+.navigation {
+  background: #555;
+  cursor: pointer;
+}
+
+.navigation p:hover {
+  background: #CCC;
+  color: black;
+}
+
 .tiles {
 }
 

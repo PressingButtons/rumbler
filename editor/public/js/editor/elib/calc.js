@@ -1,26 +1,26 @@
 export function gridToPoint(gridPos, offset = 0) {
-  if(isNaN(gridPos)) return gridPos.split(":").reverse( ).map( x => parseInt(x) * App.Tiles.TILESIZE + offset);
-  return gridPos.reverse( ).map(x => parseInt(x) * App.Tiles.TILESIZE + offset);
+  if(isNaN(gridPos)) return gridPos.split(":").reverse( ).map( x => parseInt(x) * System.TILESIZE + offset);
+  return gridPos.reverse( ).map(x => parseInt(x) * System.TILESIZE + offset);
 }
 
 export function indexToGrid(index) {
-  return Math.floor(index / App.Tiles.MAP_COLUMNS) + ":" + index % App.Tiles.MAP_COLUMNS;
+  return Math.floor(index / System.MAP_COLUMNS) + ":" + index % System.MAP_COLUMNS;
 }
 
 export function indexToPoint(index) {
   return {
-    x: Math.floor(index / App.Tiles.MAP_COLUMNS) * App.Tiles.TILESIZE,
-    y: (index % App.Tiles.MAP_COLUMNS) * App.Tiles.TILESIZE
+    x: Math.floor(index / System.MAP_COLUMNS) * System.TILESIZE,
+    y: (index % System.MAP_COLUMNS) * System.TILESIZE
   };
 }
 
 export function pointToGrid(point) {
-  return point.reverse( ).map(x => Math.floor(parseInt(x) / App.Tiles.TILESIZE));
+  return point.reverse( ).map(x => Math.floor(parseInt(x) / System.TILESIZE));
 }
 
 export function pointToTilePosition(point) {
   const grid = pointToGrid(point);
-  const coord = grid.slice( ).reverse( ).map( x => x * App.Tiles.TILESIZE);
+  const coord = grid.slice( ).reverse( ).map( x => x * System.TILESIZE);
   return {grid: grid, coord: coord}
 }
 
@@ -34,15 +34,15 @@ export function tileRect(grid) {
   return {
     x: start[1],
     y: start[0],
-    width: App.Tiles.TILESIZE,
-    height: App.Tiles.TILESIZE
+    width: System.TILESIZE,
+    height: System.TILESIZE
   };
 }
 
 function getRange(values, min, max) {
   const value = values.pop( );
   const topL = gridToPoint(value);
-  const botR = gridToPoint(value, App.Tiles.TILESIZE);
+  const botR = gridToPoint(value, System.TILESIZE);
   if(min == undefined) min = topL;
   else min = min.map((x,i) => Math.min(x, topL[i]));
   if(max == undefined) max = botR;

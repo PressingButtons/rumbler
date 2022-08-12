@@ -14,7 +14,7 @@ export function createContext(context, width, height, options, canvas = document
   return ctx;
 }
 
-export function createSVG(type, namespace = "", attributes) {
+export function createSVG(type, attributes = { }, namespace = "http://www.w3.org/2000/svg") {
   const svg = document.createElementNS(namespace, type);
   for(const name in attributes) svg.setAttribute(name, attributes[name]);
   return svg;

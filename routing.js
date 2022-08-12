@@ -47,18 +47,12 @@ module.exports = (path, express, app) => {
     fp.writeFile()
   }
 
-  const uploadStageImages = async (name, buffers) => {
-    const baseURL = path.join(__dirname, '/assets/stages/maps');
-    await fp.writeFile(path.join(baseURL, name, '/collision.webp'), buffers.collision);
-    await fp.writeFile(path.join(baseURL, name, '/layer0.webp'), buffers.layers[0]);
-    await fp.writeFile(path.join(baseURL, name, '/layer1.webp'), buffers.layers[1]);
-    await fp.writeFile(path.join(baseURL, name, '/layer2.webp'), buffers.layers[2]);
-  }
 
   app.use('/public', express.static(path.join(__dirname, '/editor/public')));
   app.use('/forms', express.static(path.join(__dirname, '/editor/forms')));
   app.use('/system', express.static(path.join(__dirname, '/system/')));
   app.use('/code', express.static(path.join(__dirname, '/javascript')));
+  app.use('/arachnid', express.static(path.join(__dirname, '/arachnidjs')));
 
   //Getters
   app.get('/', (req, res) => res.redirect('/home'));

@@ -5,13 +5,18 @@
     <title>Rumbler IDE</title>
     <link rel="stylesheet" href="/public/css/main.css">
   </head>
-  <body>
+  <body class='flex col'>
     <div class="overpane" id="overpane"></div>
+    <div class="navigation flex">
+      <p onclick="Editor.load('tile')">Tile</p>
+      <p onclick="Editor.load('object')">GameObject</p>
+    </div>
     <div class="wrapper"></div>
   </body>
   <footer>
+    <script type="module" src="/arachnid/lib.js"></script>
     <script type="module" src="/system/sysmain.js"></script>
-    <script type="module" src="/public/js/editor/app/appmain.js"></script>
+    <script type="module" src="/public/js/editor/edtmain.js"></script>
     <script type="module" src="/public/js/main.js" defer></script>
   </footer>
 </html>
