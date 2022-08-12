@@ -9,4 +9,5 @@ const onPageLoad = event => {
   switch(event.detail) {
     case 'tile': Editor.current = new TileEditor(document.querySelector('.wrapper')); break;
   }
+  Editor.current.init( );
 }

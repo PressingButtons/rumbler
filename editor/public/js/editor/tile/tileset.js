@@ -10,13 +10,11 @@ export default class Tileset extends Editor.ListenerGroup {
   #active = false;
   #cells = new Set( );
 
-  constructor(html) {
+  constructor( ) {
     super( );
-    this.#init(html);
   }
 
-  async #init(html) {
-    this.#image = await System.load.loadImage('/assets/stages/tiles.webp', html.querySelector('#tileset'));
+  async init(html) {
     this.#mouseListener = html.querySelector('#listener');
     this.#hiliteGroup = html.querySelector('#hilite');
     this.#marker = html.querySelector('#marker')
@@ -25,6 +23,7 @@ export default class Tileset extends Editor.ListenerGroup {
     this.#listeners.bindElement(this.#mouseListener, 'mouseover', this.#handleMouse.bind(this));
     this.#listeners.bindElement(this.#mouseListener, 'mouseout', this.#handleMouse.bind(this));
     this.#listeners.bindElement(this.#mouseListener, 'mouseup', this.#handleMouse.bind(this));
+    this.#image = await System.load.loadImage('/assets/stages/tiles.webp', document.getElementById('tileset'));
     this.#onMouseOut( );
   }
 

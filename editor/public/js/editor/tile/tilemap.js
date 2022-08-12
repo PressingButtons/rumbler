@@ -10,13 +10,12 @@ export default class Tilemap extends Editor.ListenerGroup {
   #active = false;
   #data;
 
-  constructor(html) {
+  constructor( ) {
     super( );
-    this.#init(html);
   }
 
-  #init(html) {
-    this.#gl = System.dom.createContext('gl', System.MAP_WIDTH, System.MAP_HEIGHT, {premultipliedAlpha: false}, html.querySelector('#tilemap_view'));
+  async init(html) {
+    this.#gl = System.dom.createContext('webgl', System.MAP_WIDTH, System.MAP_HEIGHT, {premultipliedAlpha: false}, html.querySelector('#tilemap_view'));
     this.#mouseListener = html.querySelector('#listener');
     this.#stamp = html.querySelector('#stamper');
     this.#ctx = System.dom.createContext('2d', System.TILESIZE, System.TILESIZE, {premultipliedAlpha:false}, this.#stamp.querySelector('canvas'));
@@ -33,6 +32,8 @@ export default class Tilemap extends Editor.ListenerGroup {
   get tileset( ) {
     return document.getElementById('tileset');
   }
+
+  get gl( ) {return this.#gl}
 
   #drawStampCells(range, values) {
     for(const cell of values.cells) {
@@ -62,7 +63,7 @@ export default class Tilemap extends Editor.ListenerGroup {
 
   #onMouseDown(position) {
     this.#active = true;
-    this.#sendStamp( );
+    this.#sendStamp(position);
   }
 
   #onMouseUp(position) {
@@ -87,7 +88,7 @@ export default class Tilemap extends Editor.ListenerGroup {
     const width = range[2] - range[0], height = range[3] - range[1];
     this.#resizeStamp(width, height);
     this.#drawStampCells(range, event.detail);
-    this.#data = {range: range, cells: cells}
+    this.#data = {range: range, cells: event.detail.cells}
   }
 
   #resizeStamp(width, height) {
@@ -102,6 +103,7 @@ export default class Tilemap extends Editor.ListenerGroup {
   }
 
   #sendStamp(position) {
+    if(!this.#data) return;
     this.#data.position = position;
     document.dispatchEvent(new CustomEvent('stamp', {detail: this.#data}));
   }
