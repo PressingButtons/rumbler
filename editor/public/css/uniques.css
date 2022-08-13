@@ -10,6 +10,11 @@
   position: absolute;
 }
 
+#map_view {
+  background: none;
+  border: 1px solid black;
+}
+
 section {
   background: var(--panel-color);
 }
@@ -49,9 +54,15 @@ section {
   width: 530px;
 }
 
-.tiles section .content {
+.tiles section .content.dark {
   background: var(--bg-color);
 }
+
+.tiles section .content.light {
+  background: white;
+}
+
+
 
 .tilesvg {
   width: 100%;

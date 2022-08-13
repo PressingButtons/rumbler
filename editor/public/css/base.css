@@ -62,6 +62,9 @@ article {
 
 }
 
+canvas {
+  display: block;
+}
 
 .overpane {
   display: none;
@@ -105,4 +108,9 @@ article {
 
 .wrapper > div:not(:last-child) {
   margin: 1px;
+}
+
+.panel {
+  background: #A9A9A9;
+  color: #333;
 }

@@ -31,7 +31,8 @@ export default class MapData {
   //private
   #convertToColor(cell) {
     const index = cell.split(":").map( x => x.toString(16).padStart(2, '0')).join("");
-    return "#" + index + "00FF";
+    if(index != "0000") return "#" + index + "00FF";
+    else return null;
   }
 
   async #loadData( ) {
@@ -50,16 +51,20 @@ export default class MapData {
     this.#maptxt.useImage(this.#gl, this.#outctx.canvas);
     document.dispatchEvent(new CustomEvent('drawmap', {detail: {
       tiles: this.#tiletxt,
-      map: this.#maptxt
+      map: this.#maptxt,
+      src: this.#outctx.canvas
     }}));
   }
 
   #plotCell(cell, data) {
     const point = Editor.Calc.gridToPoint(cell);
-    const x = point[0] - data.range[0] + data.position[0];
-    const y = point[1] - data.range[1] + data.position[1];
-    this.#outctx.fillStyle = this.#convertToColor(cell);
-    this.#outctx.fillRect(x, y, 1, 1);
+    const coord = point.map((x, i) => (x - data.range[i] + data.position.coord[i]) / System.TILESIZE);
+    const color = this.#convertToColor(cell);
+    this.#outctx.clearRect(...coord, 1, 1);
+    if(color) {
+      this.#outctx.fillStyle = this.#convertToColor(cell);
+      this.#outctx.fillRect(...coord, 1, 1);
+    }
   }
 
 }

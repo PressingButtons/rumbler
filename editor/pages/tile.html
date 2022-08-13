@@ -5,7 +5,7 @@
       <!-- workspace -->
       <section class='workspace'>
         <header>Workspace</header>
-        <div class="content col">
+        <div class="content col dark">
           <div class="view-container tilemap">
             <img src="" alt="" width="640px" height="360px">
             <canvas id="tilemap_view"></canvas>
@@ -35,7 +35,7 @@
         <!-- sprites -->
         <section class='sprites'>
           <header>Sprites</header>
-          <div class="content col">
+          <div class="content col dark">
               <div class="view-container tileset">
                 <img src="" alt="" id='tileset'>
                 <svg class='tilesvg'>
@@ -55,7 +55,13 @@
 
         <section class='command'>
           <header>Command</header>
-          <div class="content">
+          <div class="content flex dark">
+            <div class="panel mapview">
+              <h1>Tilemap</h1>
+              <div class="content light">
+                <canvas id="map_view"></canvas>
+              </div>
+            </div>
 
           </div>
         </section>
