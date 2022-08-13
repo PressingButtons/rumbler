@@ -9,7 +9,6 @@ export default class MapRender extends Editor.ListenerGroup {
   constructor( ) {
     super( );
     this.#transform = glMatrix.mat4.create( );
-    this.#projection = glMatrix.mat4.ortho(glMatrix.mat4.create( ), 0, System.MAP_WIDTH, System.MAP_HEIGHT, 0, 1, -1);
   }
 
   async init(gl) {
@@ -23,12 +22,21 @@ export default class MapRender extends Editor.ListenerGroup {
   #createBuffer( ) {
     const w = System.MAP_WIDTH;
     const h = System.MAP_HEIGHT;
-    return System.glRender.createBuffer(this.#gl, new Float32Array([0, 0, w, 0, 0, h, 0, h, w, h, w, 0]));
+    return System.glRender.createBuffer(this.#gl, new Float32Array([
+      0, 0, 0, 0,
+      1, 0, 1, 0,
+      0, 1, 0, 1,
+      0, 1, 0, 1,
+      1, 1, 1, 1,
+      1, 0, 1, 0
+    ]));
   }
 
   #onDrawMap(event) {
-    System.glRender.colorFill(this.#gl, [1.0, 0.5, 0.3, 1.0]);
-    //System.glRender.drawTilemap(this.#gl, this.#shader, this.#buffer, event.detail.tiles, event.detail.map, this.#transform, this.#projection);
+    this.#gl.viewport( 0, 0, System.MAP_WIDTH, System.MAP_HEIGHT);
+    this.#projection = glMatrix.mat4.ortho(glMatrix.mat4.create( ), 0, System.MAP_WIDTH, System.MAP_HEIGHT, 0, 1, -1);
+    this.#transform = glMatrix.mat4.fromRotationTranslationScale(glMatrix.mat4.create( ), [0, 0, 0,0], [0, 0, 0, 0], [event.detail.tiles.width, event.detail.tiles.height, 1]);
+    System.glRender.drawTilemap(this.#gl, this.#shader, this.#buffer, event.detail.tiles, event.detail.map, this.#transform, this.#projection);
   }
 
 

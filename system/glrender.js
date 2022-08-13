@@ -1,9 +1,11 @@
 export function drawTilemap(gl, ar_shader, buffer, tileTexture, mapTexture, transform, projection) {
   setBuffer(gl, buffer);
-  activateTexture(gl, 0, mapTexture.texture, ar_shader.uniforms.mapTexture);
-  activateTexture(gl, 1, tileTexture.texture, ar_shader.uniforms.tileTexture);
-  gl.uniformMatrix4fv(ar_shader.uniforms.projection, false, projection);
-  gl.uniformMatrix4fv(ar_shader.uniforms.transform, false, transform);
+  activateAttribute(gl, ar_shader.attributes.a_position, 2, 4, 0);
+  activateAttribute(gl, ar_shader.attributes.a_texCoord, 2, 4, 2);
+  activateTexture(gl, 0, mapTexture.texture, ar_shader.uniforms.u_map);
+  activateTexture(gl, 1, tileTexture.texture, ar_shader.uniforms.u_tiles);
+  gl.uniformMatrix4fv(ar_shader.uniforms.u_projection, false, projection);
+  gl.uniformMatrix4fv(ar_shader.uniforms.u_transform, false, transform);
   gl.drawArrays(gl.TRIANGLES, 0 ,6);
 }
 
