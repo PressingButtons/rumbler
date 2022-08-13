@@ -1,6 +1,5 @@
 export default class Tilemap extends Editor.ListenerGroup {
 
-  #listeners = new Editor.ListenerGroup( );
   #mouseListener;
   #stamp;
   #ctx;
@@ -19,14 +18,14 @@ export default class Tilemap extends Editor.ListenerGroup {
     this.#mouseListener = html.querySelector('#listener');
     this.#stamp = html.querySelector('#stamper');
     this.#ctx = System.dom.createContext('2d', System.TILESIZE, System.TILESIZE, {premultipliedAlpha:false}, this.#stamp.querySelector('canvas'));
-    this.#listeners.bindElement(this.#mouseListener, 'mousedown', this.#handleMouse.bind(this));
-    this.#listeners.bindElement(this.#mouseListener, 'mousemove', this.#handleMouse.bind(this));
-    this.#listeners.bindElement(this.#mouseListener, 'mouseover', this.#handleMouse.bind(this));
-    this.#listeners.bindElement(this.#mouseListener, 'mouseout', this.#handleMouse.bind(this));
-    this.#listeners.bindElement(this.#mouseListener, 'mouseup', this.#handleMouse.bind(this));
+    this.bindElement(this.#mouseListener, 'mousedown', this.#handleMouse.bind(this));
+    this.bindElement(this.#mouseListener, 'mousemove', this.#handleMouse.bind(this));
+    this.bindElement(this.#mouseListener, 'mouseover', this.#handleMouse.bind(this));
+    this.bindElement(this.#mouseListener, 'mouseout', this.#handleMouse.bind(this));
+    this.bindElement(this.#mouseListener, 'mouseup', this.#handleMouse.bind(this));
     this.#onMouseOut( );
     this.#resizeStamp(System.TILESIZE, System.TILESIZE);
-    this.#listeners.bindElement(document, 'tileselection', this.#onTileSelection.bind(this));
+    this.bindElement(document, 'tileselection', this.#onTileSelection.bind(this));
   }
 
   get tileset( ) {

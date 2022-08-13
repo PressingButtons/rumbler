@@ -1,6 +1,5 @@
 export default class Tileset extends Editor.ListenerGroup {
 
-  #listeners = new Editor.ListenerGroup( );
   #mouseListener;
   #hiliteGroup;
   #marker;
@@ -18,11 +17,11 @@ export default class Tileset extends Editor.ListenerGroup {
     this.#mouseListener = html.querySelector('#listener');
     this.#hiliteGroup = html.querySelector('#hilite');
     this.#marker = html.querySelector('#marker')
-    this.#listeners.bindElement(this.#mouseListener, 'mousedown', this.#handleMouse.bind(this));
-    this.#listeners.bindElement(this.#mouseListener, 'mousemove', this.#handleMouse.bind(this));
-    this.#listeners.bindElement(this.#mouseListener, 'mouseover', this.#handleMouse.bind(this));
-    this.#listeners.bindElement(this.#mouseListener, 'mouseout', this.#handleMouse.bind(this));
-    this.#listeners.bindElement(this.#mouseListener, 'mouseup', this.#handleMouse.bind(this));
+    this.bindElement(this.#mouseListener, 'mousedown', this.#handleMouse.bind(this));
+    this.bindElement(this.#mouseListener, 'mousemove', this.#handleMouse.bind(this));
+    this.bindElement(this.#mouseListener, 'mouseover', this.#handleMouse.bind(this));
+    this.bindElement(this.#mouseListener, 'mouseout', this.#handleMouse.bind(this));
+    this.bindElement(this.#mouseListener, 'mouseup', this.#handleMouse.bind(this));
     this.#image = await System.load.loadImage('/assets/stages/tiles.webp', document.getElementById('tileset'));
     this.#onMouseOut( );
   }

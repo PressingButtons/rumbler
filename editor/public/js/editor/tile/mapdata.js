@@ -47,11 +47,11 @@ export default class MapData {
   }
 
   #outputMap( ) {
-    this.#maptxt.useImage(this.#outctx.canvas);
-    document.dispatchEvent(new CustomEvent('drawmap'), {detail: {
+    this.#maptxt.useImage(this.#gl, this.#outctx.canvas);
+    document.dispatchEvent(new CustomEvent('drawmap', {detail: {
       tiles: this.#tiletxt,
       map: this.#maptxt
-    }});
+    }}));
   }
 
   #plotCell(cell, data) {

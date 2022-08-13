@@ -5,6 +5,7 @@ import * as loader from './loader.js';
 import * as mouse  from './mouse.js';
 import * as parse  from './parse.js';
 import * as assetLoader from './assetloader.js';
+import * as glRender from './glrender.js';
 import DataFile from './datafile.js';
 
 Object.defineProperty(window, 'System', {value: { }});
@@ -17,6 +18,7 @@ Object.defineProperties(System, {
   mouse:  {value: mouse},
   parse:  {value: parse},
   assetLoader: {value: assetLoader},
+  glRender: {value: glRender},
   DataFile: {value: DataFile},
   PIXEL_LENGTH: {value: 4},
   TILESIZE: {value: 16},

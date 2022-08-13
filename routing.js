@@ -53,6 +53,7 @@ module.exports = (path, express, app) => {
   app.use('/system', express.static(path.join(__dirname, '/system/')));
   app.use('/code', express.static(path.join(__dirname, '/javascript')));
   app.use('/arachnid', express.static(path.join(__dirname, '/arachnidjs')));
+  app.use('/shaders', express.static(path.join(__dirname, '/shaders')));
 
   //Getters
   app.get('/', (req, res) => res.redirect('/home'));
