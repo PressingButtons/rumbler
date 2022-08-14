@@ -30,7 +30,8 @@ export default class MapData extends Editor.ListenerGroup {
   //private
   #convertToColor(cell) {
     const index = cell.split(":").map( x => Number(x).toString(16).padStart(2, '0')).join("");
-    return "#" + index + index != "0000" ? "00FF" : "0000";
+    if(index != '0000') return '#' + index + '00FF';
+    else return '#00000000';
   }
 
   #getPosition(cell, range, grid) {
