@@ -35,8 +35,8 @@ export default class MapRender extends Editor.ListenerGroup {
   #onDrawMap(event) {
     this.#gl.viewport( 0, 0, System.MAP_WIDTH, System.MAP_HEIGHT);
     this.#projection = glMatrix.mat4.ortho(glMatrix.mat4.create( ), 0, System.MAP_WIDTH, System.MAP_HEIGHT, 0, 1, -1);
-    this.#transform = glMatrix.mat4.fromRotationTranslationScale(glMatrix.mat4.create( ), [0, 0, 0,0], [0, 0, 0, 0], [event.detail.tiles.width, event.detail.tiles.height, 1]);
-    System.glRender.drawTilemap(this.#gl, this.#shader, this.#buffer, event.detail.tiles, event.detail.map, this.#transform, this.#projection);
+    this.#transform = glMatrix.mat4.fromRotationTranslationScale(glMatrix.mat4.create( ), [0, 0, 0,0], [0, 0, 0, 0], [1280, 720, 1]);
+    System.glRender.drawTilemap(this.#gl, this.#shader, this.#buffer, event.detail.tiles, event.detail.map,  this.#transform, this.#projection);
   }
 
 

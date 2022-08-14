@@ -1,6 +1,5 @@
-export default class MapData {
+export default class MapData extends Editor.ListenerGroup {
 
-  #listeners = new Editor.ListenerGroup( );
   #source;
   #config;
   #outctx;
@@ -9,17 +8,20 @@ export default class MapData {
   #gl;
 
   constructor( ) {
-    this.#listeners.bindElement(document, 'stamp', this.#onStamp.bind(this));
+    super( );
+    this.bindElement(document, 'stamp', this.#onStamp.bind(this));
   }
 
   async init(gl, tiles) {
     this.#gl = gl;
     await this.#loadData( );
     this.#outctx = System.dom.createContext('2d', System.MAP_COLUMNS, System.MAP_ROWS * 4);
+    this.#outctx.imageSmoothingEnabled = false;
     this.#maptxt = new Arachnid.Texture( );
     this.#tiletxt = new Arachnid.Texture( );
     this.#tiletxt.useImage(gl, tiles);
     this.selectMap(0);
+    this.#outputMap( );
   }
 
   selectMap(i) {
@@ -30,7 +32,7 @@ export default class MapData {
 
   //private
   #convertToColor(cell) {
-    const index = cell.split(":").map( x => x.toString(16).padStart(2, '0')).join("");
+    const index = cell.split(":").map( x => Number(x).toString(16).padStart(2, '0')).join("");
     if(index != "0000") return "#" + index + "00FF";
     else return null;
   }

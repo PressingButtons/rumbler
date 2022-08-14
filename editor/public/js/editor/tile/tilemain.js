@@ -18,16 +18,16 @@ export default class TileEditor  {
     this.mapview = new MapView( );
     await this.tilemap.init(this.html.querySelector('.tilemap'));
     await this.tileset.init(this.html.querySelector('.tileset'));
-    await this.mapdata.init(this.tilemap.gl, this.tilemap.tileset);
-    await this.maprender.init(this.tilemap.gl);
     await this.mapview.init(this.html.querySelector('.mapview'));
+    await this.maprender.init(this.tilemap.gl);
+    await this.mapdata.init(this.tilemap.gl, this.tilemap.tileset);
   }
 
   shutdown( ) {
-    this.tileset.shutdown( );
-    this.tilemap.shutdown( );
-    this.mapdata.shutdown( );
-    this.maprender.shutdown( );
+    this.tileset.unbindAll( );
+    this.tilemap.unbindAll( );
+    this.mapdata.unbindAll( );
+    this.maprender.unbindAll( );
   }
 
 }

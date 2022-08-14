@@ -1,4 +1,4 @@
-export function drawTilemap(gl, ar_shader, buffer, tileTexture, mapTexture, transform, projection) {
+export function drawTilemap(gl, ar_shader, buffer, tileTexture, mapTexture, transform, projection, tint = [1, 1, 1, 1]) {
   setBuffer(gl, buffer);
   activateAttribute(gl, ar_shader.attributes.a_position, 2, 4, 0);
   activateAttribute(gl, ar_shader.attributes.a_texCoord, 2, 4, 2);
@@ -6,6 +6,10 @@ export function drawTilemap(gl, ar_shader, buffer, tileTexture, mapTexture, tran
   activateTexture(gl, 1, tileTexture.texture, ar_shader.uniforms.u_tiles);
   gl.uniformMatrix4fv(ar_shader.uniforms.u_projection, false, projection);
   gl.uniformMatrix4fv(ar_shader.uniforms.u_transform, false, transform);
+  gl.uniform2fv(ar_shader.uniforms.u_stagesize, [System.MAP_WIDTH, System.MAP_HEIGHT]);
+  gl.uniform2fv(ar_shader.uniforms.u_tilemap_size, [tileTexture.width, tileTexture.height]);
+  gl.uniform1f(ar_shader.uniforms.u_tilesize, System.TILESIZE);
+  gl.uniform4fv(ar_shader.uniforms.u_tint, tint);
   gl.drawArrays(gl.TRIANGLES, 0 ,6);
 }
 
