@@ -31,7 +31,7 @@ export default class MapData extends Editor.ListenerGroup {
   #convertToColor(cell) {
     const index = cell.split(":").map( x => Number(x).toString(16).padStart(2, '0')).join("");
     if(index != '0000') return '#' + index + '00FF';
-    else return '#000000FF';
+    else return null;
   }
 
   #getPosition(cell, range, grid) {
@@ -62,7 +62,11 @@ export default class MapData extends Editor.ListenerGroup {
 
   #plotCell(cell, data) {
     const point = this.#getPosition(cell, data.range, data.position.grid);
-    this.#source.fillStyle = this.#convertToColor(cell);
-    this.#source.fillRect(...point, 1, 1);
+    const color = this.#convertToColor(cell);
+    if(color == null) this.#source.clearRect(...point, 1, 1);
+    else {
+      this.#source.fillStyle = color;
+      this.#source.fillRect(...point, 1, 1);
+    }
   }
 }

@@ -21,7 +21,7 @@ export default class MapRender extends Editor.ListenerGroup {
     this.#tileTexture.useImage(gl, tiles);
     this.bindElement(document, 'drawmap', this.#onDrawMap.bind(this));
     this.#buffer = this.#createBuffer( );
-    gl.useProgram(this.#shader.program);
+    System.glRender.setShader(gl, this.#shader);
   }
 
   #createBuffer( ) {
@@ -38,6 +38,7 @@ export default class MapRender extends Editor.ListenerGroup {
   }
 
   #cropSource(data) {
+    this.#ctx.clearRect(0, 0, this.#ctx.canvas.width, this.#ctx.canvas.height);
     this.#ctx.drawImage(data.src,
       data.coord[0], data.coord[1], System.MAP_COLUMNS, System.MAP_ROWS,
       0, 0, System.MAP_COLUMNS, System.MAP_ROWS
@@ -45,7 +46,14 @@ export default class MapRender extends Editor.ListenerGroup {
     return this.#ctx.canvas;
   }
 
+  #drawLayer(data) {
+    for(let i = 0; i < 4; i++) {
+      
+    }
+  }
+
   #onDrawMap(event) {
+    System.glRender.colorFill(this.#gl, [0, 0, 0, 0]);
     const source = this.#cropSource(event.detail);
     this.#mapTexture.useImage(this.#gl, source);
     this.#gl.viewport( 0, 0, System.MAP_WIDTH, System.MAP_HEIGHT);

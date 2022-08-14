@@ -4,9 +4,10 @@ import MapData from './mapdata.js';
 import MapRender from './maprender.js';
 import MapView from './mapview.js';
 
-export default class TileEditor  {
+export default class TileEditor extends Editor.ListenerGroup {
 
   constructor(html) {
+    super( );
     this.html = html;
   }
 
@@ -21,6 +22,7 @@ export default class TileEditor  {
     await this.mapview.init(this.html.querySelector('.mapview'));
     await this.maprender.init(this.tilemap.gl, this.tileset.image);
     await this.mapdata.init(this.tilemap.gl);
+    this.bindElement(document, 'keyup', this.#onKeyUp.bind(this));
   }
 
   shutdown( ) {
@@ -28,6 +30,16 @@ export default class TileEditor  {
     this.tilemap.unbindAll( );
     this.mapdata.unbindAll( );
     this.maprender.unbindAll( );
+    this.unbindAll( );
+  }
+
+  #onKeyUp(event) {
+    const key = event.key.toLowerCase( );
+    if(!isNaN(key)) this.#selectLayer(parseInt(key));
+  }
+
+  #selectLayer(num) {
+    if(num > -1 && num < 5) this.mapdata.selectLayer(num)
   }
 
 }
