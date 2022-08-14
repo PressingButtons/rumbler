@@ -19,8 +19,8 @@ export default class TileEditor  {
     await this.tilemap.init(this.html.querySelector('.tilemap'));
     await this.tileset.init(this.html.querySelector('.tileset'));
     await this.mapview.init(this.html.querySelector('.mapview'));
-    await this.maprender.init(this.tilemap.gl);
-    await this.mapdata.init(this.tilemap.gl, this.tilemap.tileset);
+    await this.maprender.init(this.tilemap.gl, this.tileset.image);
+    await this.mapdata.init(this.tilemap.gl);
   }
 
   shutdown( ) {

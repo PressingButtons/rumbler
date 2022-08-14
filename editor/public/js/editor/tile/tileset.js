@@ -26,6 +26,10 @@ export default class Tileset extends Editor.ListenerGroup {
     this.#onMouseOut( );
   }
 
+  get image( ) {
+    return this.#image
+  }
+
   //
   #createRect(coord) {
     return System.dom.createSVG(

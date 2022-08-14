@@ -1,46 +1,36 @@
 export default class MapData extends Editor.ListenerGroup {
 
-  #source;
   #config;
-  #outctx;
-  #maptxt;
-  #tiletxt;
+  #source;
   #gl;
-  #coord = [0, 0];
+  #index = 0;
+  #coord = [0, 0]
+
 
   constructor( ) {
     super( );
     this.bindElement(document, 'stamp', this.#onStamp.bind(this));
   }
 
-  async init(gl, tiles) {
+  async init(gl) {
     this.#gl = gl;
     await this.#loadData( );
-    this.#outctx = System.dom.createContext('2d', System.MAP_COLUMNS, System.MAP_ROWS * 4);
-    this.#outctx.imageSmoothingEnabled = false;
-    this.#maptxt = new Arachnid.Texture( );
-    this.#tiletxt = new Arachnid.Texture( );
-    this.#tiletxt.useImage(gl, tiles);
-    this.selectMap(0);
     this.#outputMap( );
   }
 
   selectMap(i) {
-    const w = System.MAP_COLUMNS;
-    const h = System.MAP_ROWS;
-    this.#outctx.drawImage(this.#source.canvas, w * i, 0, w, h, 0, 0, w, h * 4);
-    this.#coord[0] = i * System.MAP_COLUMNS;
+    this.#index = i;
+    this.#coord[0] = System.MAP_COLUMNS * i;
   }
 
-  selectRow(i) {
-    this.#coord[1] = i;
+  selectLayer(i) {
+    this.#coord[1] = System.MAP_ROWS * i;
   }
 
   //private
   #convertToColor(cell) {
     const index = cell.split(":").map( x => Number(x).toString(16).padStart(2, '0')).join("");
-    if(index != "0000") return "#" + index + "00FF";
-    else return null;
+    return "#" + index + index != "0000" ? "00FF" : "0000";
   }
 
   #getPosition(cell, range, grid) {
@@ -57,30 +47,21 @@ export default class MapData extends Editor.ListenerGroup {
   }
 
   #onStamp(event) {
-    this.selectMap(this.#coord[0]);
     if(!this.#source) return;
     for(const cell of event.detail.cells) this.#plotCell(cell, event.detail);
     this.#outputMap( );
   }
 
   #outputMap( ) {
-    this.#maptxt.useImage(this.#gl, this.#outctx.canvas);
     document.dispatchEvent(new CustomEvent('drawmap', {detail: {
-      tiles: this.#tiletxt,
-      map: this.#maptxt,
-      src: this.#outctx.canvas
+      src: this.#source.canvas,
+      coord: this.#coord
     }}));
   }
 
   #plotCell(cell, data) {
     const point = this.#getPosition(cell, data.range, data.position.grid);
-    const color = this.#convertToColor(cell);
-    this.#source.clearRect(...point, 1, 1);
-    console.log(point, color);
-    if(color) {
-      this.#source.fillStyle = color;
-      this.#source.fillRect(...point, 1, 1);
-    }
+    this.#source.fillStyle = this.#convertToColor(cell);
+    this.#source.fillRect(...point, 1, 1);
   }
-
 }
