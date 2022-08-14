@@ -17,7 +17,7 @@ export default class MapView extends Editor.ListenerGroup {
     this.#ctx.clearRect(0, 0, this.#ctx.canvas.width, this.#ctx.canvas.height);
     this.#ctx.drawImage(
       event.detail.src,
-      event.detail.coord[0], event.detail.coord[1], System.MAP_COLUMNS, System.MAP_ROWS * 4,
+      event.detail.coord[0], 0, System.MAP_COLUMNS, System.MAP_ROWS * 4,
       0, 0, System.MAP_COLUMNS, System.MAP_ROWS * 4
     )
   }

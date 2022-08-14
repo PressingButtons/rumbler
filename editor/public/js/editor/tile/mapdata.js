@@ -3,8 +3,8 @@ export default class MapData extends Editor.ListenerGroup {
   #config;
   #source;
   #gl;
-  #index = 0;
-  #coord = [0, 0]
+  #index = [0, 0];
+  #coord = [0, 0];
 
 
   constructor( ) {
@@ -19,11 +19,12 @@ export default class MapData extends Editor.ListenerGroup {
   }
 
   selectMap(i) {
-    this.#index = i;
+    this.#index[0] = i;
     this.#coord[0] = System.MAP_COLUMNS * i;
   }
 
   selectLayer(i) {
+    this.#index[1] = i;
     this.#coord[1] = System.MAP_ROWS * i;
   }
 
@@ -36,8 +37,8 @@ export default class MapData extends Editor.ListenerGroup {
 
   #getPosition(cell, range, grid) {
     const coord = Editor.Calc.gridToPoint(cell).map((x, i) => (x - range[i]) / System.TILESIZE);
-    coord[0] += grid[1] + System.MAP_COLUMNS * this.#coord[0];
-    coord[1] += grid[0] + System.MAP_ROWS * this.#coord[1];
+    coord[0] += grid[1] + System.MAP_COLUMNS * this.#index[0];
+    coord[1] += grid[0] + (System.MAP_ROWS * this.#index[1]);
     return coord;
   }
 
