@@ -7,7 +7,9 @@ export default class MapView extends Editor.ListenerGroup {
   }
 
   init(html) {
-    this.#ctx = System.dom.createContext('2d', System.MAP_COLUMNS, System.MAP_ROWS * 4, null, html.querySelector('#map_view'));
+    this.#ctx = System.dom.createContext('2d', System.MAP_COLUMNS * 2, System.MAP_ROWS * 8, null, html.querySelector('#map_view'));
+    this.#ctx.scale(2, 2);
+    this.#ctx.imageSmoothingEnabled = false;
     this.bindElement(document, 'drawmap', this.#onDrawMap.bind(this));
   }
 
