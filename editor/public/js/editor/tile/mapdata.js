@@ -6,6 +6,7 @@ export default class MapData extends Editor.ListenerGroup {
   #maptxt;
   #tiletxt;
   #gl;
+  #coord = [0, 0];
 
   constructor( ) {
     super( );
@@ -28,6 +29,11 @@ export default class MapData extends Editor.ListenerGroup {
     const w = System.MAP_COLUMNS;
     const h = System.MAP_ROWS;
     this.#outctx.drawImage(this.#source.canvas, w * i, 0, w, h, 0, 0, w, h * 4);
+    this.#coord[0] = i * System.MAP_COLUMNS;
+  }
+
+  selectRow(i) {
+    this.#coord[1] = i;
   }
 
   //private
@@ -37,6 +43,13 @@ export default class MapData extends Editor.ListenerGroup {
     else return null;
   }
 
+  #getPosition(cell, range, grid) {
+    const coord = Editor.Calc.gridToPoint(cell).map((x, i) => (x - range[i]) / System.TILESIZE);
+    coord[0] += grid[1] + System.MAP_COLUMNS * this.#coord[0];
+    coord[1] += grid[0] + System.MAP_ROWS * this.#coord[1];
+    return coord;
+  }
+
   async #loadData( ) {
     let pkg = await System.assetLoader.loadMapData( );
     this.#source = pkg["data.webp"];
@@ -44,6 +57,7 @@ export default class MapData extends Editor.ListenerGroup {
   }
 
   #onStamp(event) {
+    this.selectMap(this.#coord[0]);
     if(!this.#source) return;
     for(const cell of event.detail.cells) this.#plotCell(cell, event.detail);
     this.#outputMap( );
@@ -59,13 +73,13 @@ export default class MapData extends Editor.ListenerGroup {
   }
 
   #plotCell(cell, data) {
-    const point = Editor.Calc.gridToPoint(cell);
-    const coord = point.map((x, i) => (x - data.range[i] + data.position.coord[i]) / System.TILESIZE);
+    const point = this.#getPosition(cell, data.range, data.position.grid);
     const color = this.#convertToColor(cell);
-    this.#outctx.clearRect(...coord, 1, 1);
+    this.#source.clearRect(...point, 1, 1);
+    console.log(point, color);
     if(color) {
-      this.#outctx.fillStyle = this.#convertToColor(cell);
-      this.#outctx.fillRect(...coord, 1, 1);
+      this.#source.fillStyle = color;
+      this.#source.fillRect(...point, 1, 1);
     }
   }
 
