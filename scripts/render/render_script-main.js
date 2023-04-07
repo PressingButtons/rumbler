@@ -6,7 +6,7 @@ messenger.setRoute('init', async function(message) {
     try {
         const url = new URL('../shaders/config.json', message.uri);
         self.gl_engine = new glEngine(message.canvas);
-        self.render_engine = new RenderEngine(message.uri);
+        self.render_engine = new RenderEngine( )
         const config = await fetch(url).then(res => res.json( ));
         for(const program_name in config) {
             const vertex = await fetch(new URL(config[program_name].vertex, message.uri)).then(res => res.text( ));
@@ -26,3 +26,9 @@ messenger.setRoute('color-fill', message => {
 messenger.setRoute('draw-texture', message => {
     render_engine.drawTexture(message);
 });
+
+messenger.setRoute('preload', message => {
+    for(const key in message) {
+        render_engine.cacheTexture(key, message[key]);
+    }
+})
