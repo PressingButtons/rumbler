@@ -55,6 +55,18 @@ class glEngine {
         return uniforms;
     }
 
+    #texture_powerOf2(n) {
+        return (n & (n - 1) == 0)
+    }
+
+    #texture_setTextureParameters( ) {
+        const gl = this.#gl;
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    }
+
     #fetchText(url, base) {
         return fetch(new URL(url, base)).then(res => res.text( ));
     }
@@ -70,6 +82,17 @@ class glEngine {
             attributes: attributes,
             uniforms: uniforms
         }   
+    }
+
+    createTexture(image) {
+        const texture = this.#gl.createTexture( );
+        this.#gl.bindTexture(texture);
+        this.#gl.texImage2D(this.#gl.TEXTURE_2D, 0, this.#gl.RGBA, this.gl.RGBA, this.#gl.UNSIGNED_BYTE, image);
+        if(this.#texture_powerOf2(image.width) && this.#texture_powerOf2(image.height)) this.#gl.generateMipmap(this.#gl.TEXTURE_2D);
+        else this.#texture_setTextureParameters( );
+        return {
+            texture: texture, width: image.width, height: image.height, inverse_height: 1 / image.height, inverse_width: 1 / image.width
+        }
     }
 
     fill(color) {
