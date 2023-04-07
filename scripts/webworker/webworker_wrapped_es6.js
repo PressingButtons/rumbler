@@ -29,4 +29,19 @@ export default class WrappedWebWorkerES6 {
         return Object.keys(this.#routes);
     }
 
+    send(message_type, message_content, transferables) {
+        this.#worker.postMessage({ type: message_type, content: message_content}, transferables)
+    }
+
+    sendAsync(message_type, message_content, transferables) {
+        const self = this;
+        return new Promise((resolve, reject) => {
+            self.setRoute(message_type, function(message) {
+                self.deleteRoute(message_type);
+                resolve(message);
+            });
+            self.send(message_type, message_content, transferables);
+        });
+    }
+
 }

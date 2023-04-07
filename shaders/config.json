@@ -1,0 +1,19 @@
+{
+    "single_texture": {
+        "vertex": "/shader/glsl/texture-vertex.glsl",
+        "fragment": "/shader/glsl/single-fragment.glsl"
+    },
+    "palette_texture": {
+        "vertex": "/shader/glsl/texture-vertex.glsl", 
+        "fragment": "/shader/glsl/palette-fragment.glsl"
+    },
+
+    "color" : {
+        "vertex": "/shader/glsl/color-vertex.glsl", 
+        "fragment": "/shader/glsl/color-fragment.glsl"
+    },
+    "sprite": {
+        "vertex": "/shader/glsl/sprite-vertex.glsl", 
+        "fragment": "/shader/glsl/sprite-fragment.glsl"
+    }
+}

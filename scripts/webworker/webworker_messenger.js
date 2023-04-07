@@ -4,7 +4,7 @@ self.messenger = (function( ) {
 
     function createRoute(route_key, method) {
         routes[route_key] = function(message) {
-            if(message.data.type == route_key) method(message.data);
+            if(message.data.type == route_key) method(message.data.content);
         }
         return routes[route_key];
     }
@@ -27,4 +27,4 @@ self.messenger = (function( ) {
         }
     }
 
-});
+})( );
