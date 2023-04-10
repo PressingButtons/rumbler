@@ -1,103 +1,204 @@
-class glEngine {
+{
+    class glEngine {
 
-    /** @type {WebGLRenderingContext} */
-    #gl;
-    #programs = { };
+        /** @type {WebGLRenderingContext} */
+        #gl;
+        #programs = { };
+        #buffers = { };
+        #current_program;
 
-    constructor(canvas, options = {premultipliedAlpha: false}) {
-        this.#gl = canvas.getContext('webgl', options);
+        constructor(canvas, options = {premultipliedAlpha: false}) {
+            this.#gl = canvas.getContext('webgl', options);
+        }
+
+        get gl( ) {return this.#gl}
+
+
+        #draw_setAttributes(attributes) {
+            for(const attribute in attributes) {
+                const detail = attributes[attribute];
+                const value = this.#current_program.attributes[attribute];
+                this.#gl.enableVertexAttribArray(attribute);
+                this.#gl.vertexAttribPointer(value, detail.length, this.#gl.FLOAT, false, detail.stride * 4, detail.offset * 4);
+            }
+        }
+
+        #draw_setUniforms(uniforms) {
+            for(const uniform in uniforms) {
+                const detail = uniforms[uniform];
+                const value = this.#current_program.uniforms[uniform];
+                this.#gl[detail.method](value, ...detail.params);
+            }
+        }
+
+        #draw_setTextures(textures) {
+            let i = 0;
+            for(const texture of textures) {
+                this.#gl.activeTexture(this.#gl.TEXTURE0 + i);
+                this.#gl.bindTexture(this.#gl.TEXTURE_2D, texture.src);
+                this.#gl.texParameteri(this.#gl.TEXTURE_2D, this.#gl.TEXTURE_WRAP_S, texture.wrap_s);
+                this.#gl.texParameteri(this.#gl.TEXTURE_2D, this.#gl.TEXTURE_WRAP_T, texture.wrap_t);
+                this.#gl.uniform1i(this.#current_program.unforms[texture.uniform], i);
+                i++;
+            }
+        }
+
+        #draw_useProgram(name) {
+            if(this.#current_program == this.#programs[name]) return;
+            this.#current_program = this.#programs[name];
+            this.#gl.useProgram(this.#current_program.program);
+            this.#gl.enable(this.#gl.BLEND);
+            this.#gl.blendFunc(this.#gl.SRC_ALPHA, this.#gl.ONE_MINUS_SRC_ALPHA);
+            console.log(this.#current_program)
+        }
+
+        #texture_powerOf2(n) {
+            return (n & (n - 1) == 0)
+        }
+
+        #texture_setTextureParameters( ) {
+            const gl = this.#gl;
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        }
+
+        compile(program_key, vertex_text, fragment_text) {
+            const program = compileProgram(this.#gl, vertex_text, fragment_text);
+            this.#programs[program_key] = program;
+        }
+
+        createTexture(image) {
+            const texture = this.#gl.createTexture( );
+            this.#gl.bindTexture(this.#gl.TEXTURE_2D, texture);
+            this.#gl.texImage2D(this.#gl.TEXTURE_2D, 0, this.#gl.RGBA, this.gl.RGBA, this.#gl.UNSIGNED_BYTE, image);
+            if(this.#texture_powerOf2(image.width) && this.#texture_powerOf2(image.height)) this.#gl.generateMipmap(this.#gl.TEXTURE_2D);
+            else this.#texture_setTextureParameters( );
+            return {
+                texture: texture, width: image.width, height: image.height, inverse_height: 1 / image.height, inverse_width: 1 / image.width
+            }
+        }
+
+        defineBuffer(name, value) {
+            this.#buffers[name] = this.#gl.createBuffer();
+            this.#gl.bindBuffer(this.#gl.ARRAY_BUFFER, this.#buffers[name]);
+            this.#gl.bufferData(this.#gl.ARRAY_BUFFER, new Float32Array(value), this.#gl.STATIC_DRAW);
+        }
+
+        draw(instructions) {
+            this.#draw_useProgram(instructions.program);
+            this.#gl.bindBuffer(this.#gl.ARRAY_BUFFER, this.#buffers[instructions.buffer]);
+            this.#draw_setAttributes(instructions.attributes);
+            this.#draw_setUniforms(instructions.uniforms);
+            if(instructions.textures) this.#draw_setTextures(instructions.textures);
+            this.#gl.drawArrays(this.#gl[instructions.draw_method], instructions.first_array, instructions.indices);
+        }
+
+        
+        fill(color) {
+            this.#gl.clearColor(...color);
+            this.#gl.clear(this.#gl.DEPTH_BUFFER_BIT | this.#gl.COLOR_BUFFER_BIT);
+        }
+
     }
 
-    get gl( ) {return this.#gl}
+    /**
+     * compileProgram
+     * =========================
+     * Compiles a shader program
+     * @param {WebGLRenderingContext}
+     * @param {String} vertex_text 
+     * @param {String} fragment_text 
+     * @returns {WebGLProgram}
+     */
 
-    #compile_defineShader(shader_text, shader_type) {
-        const shader = this.#gl.createShader(shader_type);
-        this.#gl.shaderSource(shader, shader_text);
-        this.#gl.compileShader(shader);
-        if(this.#gl.getShaderParameter(shader, this.#gl.COMPILE_STATUS)) return shader;
-        else {
-            console.error('Failed to compile shader\n=====================\n', shader_text);
-            throw 'Render: Shader-Compile-Errror';
+    const compileProgram = function(gl, vertex_text, fragment_text) {
+        try {
+            const program = createLinkedProgram(gl, vertex_text, fragment_text);
+            const attributes = findAttributes(gl, program, vertex_text, fragment_text);
+            const uniforms = findUniforms(gl, program, vertex_text, fragment_text);
+            return {
+                program: program,
+                attributes: attributes,
+                uniforms: uniforms
+            }
+        } catch(err) { throw err; }
+    }
+    
+    const createLinkedProgram = (gl, vertex_text, fragment_text) => {
+        try {
+            const vertex_shader =  defineShader(gl, vertex_text, gl.VERTEX_SHADER);
+            const fragment_shader = defineShader(gl, fragment_text, gl.FRAGMENT_SHADER);  
+            return defineProgram(gl, vertex_shader, fragment_shader);
+        } catch (err) {
+            throw err;
         }
     }
-
-    #compile_defineProgram(vertex_shader, fragment_shader) {
-        const program = this.#gl.createProgram( );
-        this.#gl.attachShader(program, vertex_shader);
-        this.#gl.attachShader(program, fragment_shader);
-        this.#gl.linkProgram(program, this.#gl.LINK_STATUS);
-        if(this.#gl.getProgramParameter(program,this.#gl.LINK_STATUS)) return program;
-        const error = this.#gl.getProgramInfoLog(program);
-        this.#gl.deleteProgram(program);
-        console.error('Render: Shader-Compile-Error');
-        throw error;
+    
+    const defineShader = (gl, shader_text, shader_type) => {
+        const shader = gl.createShader(shader_type);
+        gl.shaderSource(shader, shader_text);
+        gl.compileShader(shader);
+        const success = validateShader(gl, shader, shader_text);
+        if(success) return shader;
+        else throw 'failed to compile \n' + shader_text;
     }
-
-    #compile_findParameter(parameter, vertex_text, fragment_text) {
-        const regex = new RegExp(`(?<=${parameter} ).*`, 'g');
-        const v_matches = vertex_text.match(regex);
-        const f_matches = fragment_text.match(regex);
-        const parameter_set = new Set([].concat(v_matches, f_matches))
-        return [...parameter_set.values( )];  
+    
+    const validateShader = (gl, shader, text) => {
+        if(gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return true;
+        console.error(text);
+        console.error(gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        throw 'Error compiling shader!';
     }
-
-    #compile_gatherAttributes(program, vertex_text, fragment_text) {
+    
+    const defineProgram = (gl, vertex_shader, fragment_shader) => {
+        const program = gl.createProgram( );
+        gl.attachShader(program, vertex_shader);
+        gl.attachShader(program, fragment_shader);
+        gl.linkProgram(program, gl.LINK_STATUS);
+        const status = valideProgramLink(gl, program);
+        if(status) return program;
+        else throw status 
+    }
+    
+    const valideProgramLink = (gl, program) => {
+        if(gl.getProgramParameter(program, gl.LINK_STATUS)) return program;
+        const err = gl.getProgramInfoLog(program);
+        gl.deleteProgram(program);
+        throw err;
+    }
+    
+    const findAttributes = (gl, program, vertex_text, fragment_text) => {
+        const keys = getVariableKeys(vertex_text, fragment_text, 'attribute');
         const attributes = { };
-        const attribute_keys = this.#compile_findParameter('attribute', vertex_text, fragment_text);
-        for(const key of attribute_keys) attributes[key] = this.#gl.getAttribLocation(program, key);
+        for(const key of keys) attributes[key] = gl.getAttribLocation(program, key);
         return attributes;
     }
-
-    #compile_gatherUniforms(program, vertex_text, fragment_text) {
+    
+    const findUniforms = (gl, program, vertex_text, fragment_text) => {
+        const keys = getVariableKeys(vertex_text, fragment_text, 'uniform');
         const uniforms = { };
-        const uniform_keys = this.#compile_findParameter('uniform', vertex_text, fragment_text);
-        for(const key of uniform_keys) uniforms[key] = this.#gl.getUniformLocation(program, key);
+        for(const key of keys) uniforms[key] = gl.getUniformLocation(program, key);
         return uniforms;
     }
-
-    #texture_powerOf2(n) {
-        return (n & (n - 1) == 0)
+    
+    const getVariableKeys = (vertex_text, fragment_text, variable_type) => {
+        const vertex_attributes = findParameter(vertex_text, variable_type);
+        const fragment_attributes = findParameter(fragment_text, variable_type);
+        const keys = [].concat(vertex_attributes, fragment_attributes);
+        return [...new Set(keys).values( )];
+    }
+    
+    const findParameter = (text, parameter) => {
+        const regex = new RegExp(`(?<=${parameter} ).*`, 'g');
+        const results = text.match(regex);
+        const params  = results ? results.map( x => x.substring(x.lastIndexOf(' ') + 1, x.length - 1)) : [];
+        return params;
     }
 
-    #texture_setTextureParameters( ) {
-        const gl = this.#gl;
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    }
-
-    #fetchText(url, base) {
-        return fetch(new URL(url, base)).then(res => res.text( ));
-    }
-
-    async compile(program_key, vertex_text, fragment_text) {
-        const vertex_shader   = this.#compile_defineShader(vertex_text, this.#gl.VERTEX_SHADER);
-        const fragment_shader = this.#compile_defineShader(fragment_text, this.#gl.FRAGMENT_SHADER);
-        const shader_program  = this.#compile_defineProgram(vertex_shader, fragment_shader);
-        const attributes      = this.#compile_gatherAttributes(shader_program, vertex_text, fragment_text);
-        const uniforms        = this.#compile_gatherUniforms(shader_program, vertex_text, fragment_text);
-        this.#programs[program_key] = {
-            program: shader_program,
-            attributes: attributes,
-            uniforms: uniforms
-        }   
-    }
-
-    createTexture(image) {
-        const texture = this.#gl.createTexture( );
-        this.#gl.bindTexture(this.#gl.TEXTURE_2D, texture);
-        this.#gl.texImage2D(this.#gl.TEXTURE_2D, 0, this.#gl.RGBA, this.gl.RGBA, this.#gl.UNSIGNED_BYTE, image);
-        if(this.#texture_powerOf2(image.width) && this.#texture_powerOf2(image.height)) this.#gl.generateMipmap(this.#gl.TEXTURE_2D);
-        else this.#texture_setTextureParameters( );
-        return {
-            texture: texture, width: image.width, height: image.height, inverse_height: 1 / image.height, inverse_width: 1 / image.width
-        }
-    }
-
-    fill(color) {
-        this.#gl.clearColor(...color);
-        this.#gl.clear(this.#gl.DEPTH_BUFFER_BIT | this.#gl.COLOR_BUFFER_BIT);
-    }
-
+    self.glEngine = glEngine;
 }
+
+

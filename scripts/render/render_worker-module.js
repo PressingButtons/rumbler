@@ -79,5 +79,16 @@ export default class RenderWorkerES6 extends WrappedWebWorkerES6 {
         this.send('color-fill', color);  
     }
 
+    /**
+     * Render 
+     * ===========
+     * @param {Object} object 
+     * @returns void 
+     * object must havea a projection_rect
+     */
+    render(object) {
+        this.send('render', object);
+    }
+
 
 }
