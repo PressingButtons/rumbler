@@ -116,6 +116,7 @@ class Sequence extends EventObject {
     #name;
     #current;
     #sub_sequences = { };
+    #display = new DisplayObject( );
 
     /**
      * 
@@ -166,4 +167,45 @@ class Sequence extends EventObject {
         }));
     }
 
+}
+
+class DisplayObject {
+
+    #di = {
+        buffer: 'square',
+        program: 'color',
+        textures: [],
+        draw_method: 'TRIANGLES',
+        first_array: 0,
+        indices: 4,
+        tint: [1, 1, 1, 1]
+    };
+
+    constructor( ) {
+
+    }
+
+    get display_info( ) {return this.#di };
+
+    setTexture(name, wrap_s = 'CLAMP_TO_EDGE', wrap_t = 'CLAMP_TO_EDGE') {
+        this.#di.textures.push({name: name, wrap_s: wrap_s, wrap_t: wrap_t, rect: null});
+    }
+
+    setTint(value) {
+        this.#di.tint = value;
+    }
+
+    setProgram(value) {
+        this.#di.program = value;
+    }
+
+    setBuffer(value) {
+        this.#di.buffer = value;
+    }
+
+    setDraw(type, first, length) {
+        this.#di.draw_method = type;
+        this.#di.first_array = first;
+        this.#di.indices = length;
+    }
 }
