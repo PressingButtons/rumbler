@@ -31,16 +31,12 @@
             }
         }
 
-        #draw_setTextures(textures) {
-            let i = 0;
-            for(const texture of textures) {
-                this.#gl.activeTexture(this.#gl.TEXTURE0 + i);
-                this.#gl.bindTexture(this.#gl.TEXTURE_2D, texture.src);
-                this.#gl.texParameteri(this.#gl.TEXTURE_2D, this.#gl.TEXTURE_WRAP_S, texture.wrap_s);
-                this.#gl.texParameteri(this.#gl.TEXTURE_2D, this.#gl.TEXTURE_WRAP_T, texture.wrap_t);
-                this.#gl.uniform1i(this.#current_program.unforms[texture.uniform], i);
-                i++;
-            }
+        #draw_setTexture(texture, i) {
+            this.#gl.activeTexture(this.#gl.TEXTURE0 + i);
+            this.#gl.bindTexture(this.#gl.TEXTURE_2D, texture.src);
+            this.#gl.texParameteri(this.#gl.TEXTURE_2D, this.#gl.TEXTURE_WRAP_S, texture.wrap_s);
+            this.#gl.texParameteri(this.#gl.TEXTURE_2D, this.#gl.TEXTURE_WRAP_T, texture.wrap_t);
+            this.#gl.uniform1i(this.#current_program.uniforms[texture.uniform], i);
         }
 
         #draw_useProgram(name) {
@@ -49,7 +45,6 @@
             this.#gl.useProgram(this.#current_program.program);
             this.#gl.enable(this.#gl.BLEND);
             this.#gl.blendFunc(this.#gl.SRC_ALPHA, this.#gl.ONE_MINUS_SRC_ALPHA);
-            console.log(this.#current_program)
         }
 
         #texture_powerOf2(n) {
@@ -91,7 +86,7 @@
             this.#gl.bindBuffer(this.#gl.ARRAY_BUFFER, this.#buffers[instructions.buffer]);
             this.#draw_setAttributes(instructions.attributes);
             this.#draw_setUniforms(instructions.uniforms);
-            if(instructions.textures) this.#draw_setTextures(instructions.textures);
+            for(let i = 0; i < instructions.textures.length; i++) this.#draw_setTexture(instructions.textures[i], i);
             this.#gl.drawArrays(this.#gl[instructions.draw_method], instructions.first_array, instructions.indices);
         }
 
@@ -103,9 +98,9 @@
 
     }
 
-    /**
+    /**=======================================================================
      * compileProgram
-     * =========================
+     * =======================================================================
      * Compiles a shader program
      * @param {WebGLRenderingContext}
      * @param {String} vertex_text 

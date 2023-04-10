@@ -13,10 +13,12 @@
     #baseInstructions(object) { 
         this.#instructor.clear( );
         this.#generateTransformMatrix(object);
-        this.#instructor.buffer = object.buffer_name || 'square';
+        this.#instructor.buffer = object.render_detail.buffer;
+        this.#instructor.program = object.render
         this.#instructor.setAttribute('a_position', 2, 2, 0);
         this.#instructor.setUniformMatrix('u_projection', this.#projection);
         this.#instructor.setUniformMatrix('u_transform', this.#transform);
+
     }
 
 
@@ -29,30 +31,38 @@
         glMatrix.mat4.scale(this.#transform, this.#transform, [object.width, object.height, 1]);
     }
 
-    #renderTexture(object) {
-        if(object.palette) this.#renderTexturePalette(object);
-        else this.#renderSingleTexture(object);
+    #parseRenderDetail(detail) {;
+        this.#instructor.setProgram(detail.program, detail.buffer);
+        this.#instructor.setDraw(detail.draw_method, detail.first_array, detail.indices);
+        this.#instructor.setUniform('u_tint', 'uniform4f', detail.tint);
+        switch(detail.program) {
+            case 'single_texture': this.#renderSingleTexture(detail); break;
+            case 'palette_texture': this.#renderPaletteTexture(detail); break;
+            default: this.#renderColor(detail); 
+        }
     }
 
     #renderObject(object) {
         this.#baseInstructions(object);
-        this.#renderColor(object);
+        this.#parseRenderDetail(object.render_detail);
     }
 
     //=======================================================
 
-    #renderTexturePalette(object) {
-        this.instructions.setTexture('u_texture0', this.#cache[object.texture.name].src, object.texture.wrap_s, object.texture.wrap_t);
-        this.instructions.setTexture('u_texture1', this.#cache.palette.src);
+    #renderPaletteTexture(detail) {
+        this.instructions.setTexture('u_texture_0', this.#cache[object.texture.name].src, object.texture.wrap_s, object.texture.wrap_t);
+        this.instructions.setTexture('u_texture_1', this.#cache.palette.src);
     }
 
-    #renderSingleTexture(object) {
-        this.instructions.setTexture('u_texture0', this.#cache[object.texture.name].src, object.texture.wrap_s, object.texture.wrap_t);
-    }
+    #renderSingleTexture(detail) {
+        for(const texture of detail.textures) {
+            const source = this.#cache[texture.name] || this.#cache['placeholder'];
+            this.#instructor.setTexture('u_texture_0', source.texture, detail.wrap_s, detail.wrap_t);
+        }  
+    }  
 
     #renderColor(object) {
-        this.#instructor.program = 'color',
-        this.#instructor.setUniform('u_tint', 'uniform4f', object.tint);
+        this.#instructor.program = 'color';
     }
 
     //=======================================================
@@ -107,6 +117,11 @@
             this.instructions.draw_method = method;
             this.instructions.first_array = first;
             this.instructions.indices = indices
+        }
+
+        setProgram(program, buffer = 'square') {
+            this.instructions.program = program;
+            this.instructions.buffer = buffer;
         }
 
     }
