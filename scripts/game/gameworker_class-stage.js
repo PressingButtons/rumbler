@@ -1,16 +1,28 @@
-{
-    class Stage {
+{ 
+    class GameStage {
 
-        static WIDTH = 1200;
-        static HEIGHT = 640;
+        #tilemap;
+        #background = null;
 
-        constructor( ) {
+        constructor(background, tilemap) {
+            this.#background = background;
+            this.#tilemap = this.#tilemap
+        }
 
+        tile(row, col) {
+            return this.#tilemap.getTile(row, col);
+        }
+
+        serialize( ) {
+            return {
+                background: this.#background,
+                tilemap: this.#tilemap.tiles
+            }
         }
 
     }
 
-    class StageLayer  {
 
-    }
+    self.GameStage = GameStage;
+
 }

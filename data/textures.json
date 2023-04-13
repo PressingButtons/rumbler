@@ -2,5 +2,8 @@
     "directory_uri": "../images/",
     "textures" : {
         "placeholder" : "placeholder.webp"
+    },
+    "maps": {
+        
     }
 }

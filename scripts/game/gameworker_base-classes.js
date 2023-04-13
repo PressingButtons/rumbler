@@ -131,6 +131,7 @@ class Sequence extends EventObject {
     }
 
     get current( ) {return this.#current;}
+    get display( ) {return this.#display}
 
     #createListener(key) {
         const self = this;
@@ -182,7 +183,7 @@ class DisplayObject {
     };
 
     constructor( ) {
-
+        
     }
 
     get display_info( ) {return this.#di };
