@@ -25,4 +25,9 @@ class Player {
                 this.#input_buffer[key] = input[key];
     }
 
+    update(config) {
+        config.input = 
+        this.#rumbler.update(config)
+    }
+
 }

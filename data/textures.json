@@ -1,9 +1,10 @@
 {
     "directory_uri": "../images/",
     "textures" : {
-        "placeholder" : "placeholder.webp"
+        "placeholder" : "placeholder.webp",
+        "stage_pattern": "texture_stage_pattern.webp"
     },
     "maps": {
-        
+        "sandbox": "tilemap_sandbox.webp"
     }
 }

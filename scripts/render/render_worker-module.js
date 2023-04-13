@@ -2,21 +2,18 @@ import GameWorkerES6 from "../game/gameworker_module.js";
 import WrappedWebWorkerES6 from "../webworker/webworker_wrapped_es6.js";
 
 export default class RenderWorkerES6 extends WrappedWebWorkerES6 {
-
-    #base_uri
-
-    constructor(uri) {
+    
+    constructor( ) {
         super(new URL('render_script-main.js', import.meta.url));
-        this.#base_uri = uri;
     }
 
     /**
      * 
      * @param {HTMLCanvasElement} canvas 
      */
-    #initEngine(canvas) {
+    #initEngine(canvas, uri) {
         const offscreen = canvas.transferControlToOffscreen( );
-        return this.sendAsync('init', { canvas: offscreen, uri: this.#base_uri }, [offscreen]); //compile graphics setup
+        return this.sendAsync('init', { canvas: offscreen, uri: uri}, [offscreen]); //compile graphics setup
     }
 
     #loadBitmap(url) {
@@ -28,19 +25,6 @@ export default class RenderWorkerES6 extends WrappedWebWorkerES6 {
         });
     }
     
-    /**
-     * preloads all textures
-     */
-    async #preload( ) {
-        const data = await fetch(new URL('../data/textures.json', this.#base_uri)).then(res => res.json( ));
-        const images = [], message = { }
-        for(const key in data.textures) {
-            const bitmap = await this.#loadBitmap(new URL( data.directory_uri + data.textures[key], this.#base_uri))
-            images.push(bitmap);
-            message[key] = bitmap;
-        }
-        return this.sendAsync('preload', message, images);
-    }
 
     /**
      * Sends a message received from worker to render engine
@@ -65,13 +49,15 @@ export default class RenderWorkerES6 extends WrappedWebWorkerES6 {
      * @param {GameWorkerES6} game_worker 
      */
 
-    async init(canvas, game_worker) {
+    async init(uri, canvas, game_worker, bitmaps) {
         this.#setRenderRoutes(game_worker);
-        return this.#initEngine(canvas);
+        const success = await this.#initEngine(canvas, uri);
+        if(success) await this.createTextures(bitmaps);
+        return success;
     }
 
-    async preloadTextures( ) {
-        return this.#preload( );
+    async createTextures(bitmaps) {
+        return this.sendAsync('bitmaps', bitmaps, [Object.values(bitmaps)])
     }
 
     //Single Action Methods 

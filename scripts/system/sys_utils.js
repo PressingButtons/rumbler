@@ -1,6 +1,6 @@
 function SystemUtilities( ) {
 
-    const base_uri = new URL('../', import.meta.url);
+    const base_uri = new URL('../../', import.meta.url);
 
     return {
 
@@ -21,8 +21,8 @@ function SystemUtilities( ) {
         loadImage: function(url) {
             return new Promise((resolve, reject) => {
                 const image = new Image( );
-                image.onload = event => resolve(image);
-                image.onerror = event => reject(event);
+                image.onload = event => {resolve(image)};
+                image.onerror = event => {reject(event)};
                 image.src = new URL(url, base_uri);
             }) ;
         }

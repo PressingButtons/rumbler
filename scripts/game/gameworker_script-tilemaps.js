@@ -1,5 +1,5 @@
 {
-    const maps = { };
+    const tilemaps = { };
 
     // =========================================================
     // Tilemap
@@ -42,17 +42,19 @@
         }
 
     }
-    // =========================================================
-    // Initialization 
-    // =========================================================
 
-    self.GameTiles = {
-        createTilemap: function(key, bitmap) {
-            maps[key] = new Tilemap(bitmap)
+    self.Tilemaps = {
+        get tilemap_keys( ) {
+            return Object.keys(tilemaps)
         },
-        getTilemap: function(key) {
-            return maps[key];
 
+        getMap:function(key) {
+            return tilemaps[key];
         }
     }
+
+    messenger.setRoute('bitmaps', function(message) {
+        for(const key in message) tilemaps[key] = new Tilemap(message[key]);
+    })
+
 }
