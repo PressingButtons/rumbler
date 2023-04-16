@@ -22,16 +22,15 @@ messenger.setRoute('init', async function(message) {
     }
 });
 
+messenger.setRoute('bitmaps', message => {
+    for(const key in message) render_engine.cacheTexture(key, message[key]);
+    messenger.send('bitmaps', true);
+})
+
 messenger.setRoute('color-fill', message => {
     gl_engine.fill(message);
 });
 
-messenger.setRoute('preload', message => {
-    for(const key in message) {
-        render_engine.cacheTexture(key, message[key]);
-    }
-    messenger.send('preload', 'complete');
-})
 
 messenger.setRoute('render', message => {
     render_engine.setProjection(message.projection);

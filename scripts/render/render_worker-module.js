@@ -57,7 +57,8 @@ export default class RenderWorkerES6 extends WrappedWebWorkerES6 {
     }
 
     async createTextures(bitmaps) {
-        return this.sendAsync('bitmaps', bitmaps, [Object.values(bitmaps)])
+        const ar = Object.values(bitmaps);
+        return this.sendAsync('bitmaps', bitmaps, ar);
     }
 
     //Single Action Methods 

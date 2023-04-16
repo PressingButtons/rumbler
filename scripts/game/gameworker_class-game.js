@@ -2,20 +2,47 @@
     // =========================================================
     // Game Environment Object
     // =========================================================
-    class Game extends EventObject {
+    class Game {
 
         #tilemap;
-        #players;
+        #players = { };
         #database;
 
         constructor(config) {
             this.#database = new GameDatabase( );
-            this.#tilemap = config.tilemap
+            this.#tilemap = config.tilemap;
+            this.#createPlayers(config.players)
+        }
+
+        #createPlayers(players) {
+            for(let i = 0, player; player = players[i]; i++) {
+                if(!players[i]) continue;
+                else this.#createPlayer(i, players[i]);
+            }
+        }
+
+        #createPlayer(index, config) {
+            
+        }
+
+        #updatePlayers(config) {
+
+        }
+
+        #updateWorld(config) {
+            return this.#database.update(config);
+        }
+
+        handleInput(input) {
+            
         }
 
         update(interval) {
-            const db_state = this.#database.update({interval: interval, seconds: interval * 0.001, game: this});
-            return db_state;
+            const config = {interval: interval, seconds: interval * 0.001, game: this}
+            const player_state = this.#updatePlayers(config);
+            const world_state = this.#updateWorld(config);
+            const instance = Object.assign({}, player_state, world_state);
+            return instance;
         }
 
     }
@@ -79,4 +106,3 @@
 
     self.Game = Game
 }
-

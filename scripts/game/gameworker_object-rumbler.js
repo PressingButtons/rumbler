@@ -1,96 +1,94 @@
+class Rumbler extends GameObject {
 
-{
-    /**
-     * 
-     * @param {Rumbler} rumbler 
-     * @returns {Sequence}
-     */
-    function terrestrialSequence(rumbler) {
-        const terrestrial = new Sequence('terrestrial');
+    #stats = {
+        health: 1000,
+        dash_energy: 300,
+        projectile_energy: 0,
+        forward_walk_speed: 5,
+        backward_walk_speed: 3,
+        dash_speed: 12,
+        jump_height: 200,
 
-        //land sequence 
-        const land = terrestrial.create('land', function(config) {
-            rumbler.bottom = World.GROUND_LEVEL;
-        });
+    };
 
-        land.update = function(config) {
-            if(rumbler.bottom < World.GROUND_LEVEL) return this.parent.signal('air');
-            config.world.applyFriction(rumbler, config.ms);
-        }
-        //air sequence
-        const air = terrestrial.create('air', function(config) {
+    #sequences = { };
 
-        });
+    #values = {};
 
-        air.update = function(config) {
-            config.world.applyGravity(rumbler, config.ms);
-        }
-        //return
-        terrestrial.signal('land');
-        return terrestrial;
+    constructor(config) {
+        super(config);
+        Object.assign(this.#stats, config.stats);
+        this.#initValues( );
+        this.#initSequences( );
     }
 
-    class EnergyPool {
-
-        #data; 
-
-        constructor(data, values) {
-            this.#data = data;
-            this.#data.set(values);
-        }
-
-        get max_health( ) {return this.#data[0]}
-        get max_spirit( ) {return this.#data[1]}    
-
-        get current_health( ) {return this.#data[2]}
-        set current_health(n) {
-            n = Math.min(this.max_health, n);
-            n = Math.max(0, n);
-            this.#data[2] = n;
-        }
-
-        get grey_health( )    {return this.#data[3]}
-        set grey_health(n)    {
-            n = Math.min(this.current_health, n);
-            n = Math.max(0, n);
-            this.#data[3] = n;
-        }
-
-        get spirit( ) {return this.#data[4]}
-        set spirit(n) {
-            n = Math.min(this.max_spirit, n);
-            n = Math.max(0, n);
-            this.#data[4] = n;
-        }
-        
+    #initValues( ) {
+        this.#values.health = this.#stats.health;
+        this.#values.energy = this.#stats.energy
+        this.#values.projectile_energy = this.#stats.energy; 
     }
 
-    class Rumbler extends GameObject {
+    #initSequences( ) {
+        this.#sequences.activate_state = rumbler_ActiveSequenceTree( );
+    }
 
-        #terrestial_sequence;
-        #energy;
-
-        constructor(config) {
-            super(config.name, config.width, config.height);
-            this.#energy = new EnergyPool(this.data_buffer.createInt16(5));
-            this.#terrestial_sequence = terrestrialSequence(this);
-        }
-
-        get terrestrial_sequence( ) { return this.#terrestial_sequence }
-
-        get root_type ( ) { return 'palette-texture' }
-
-        wrap( ) {
-            return Object.assign(GameObject.prototype.wrap.call(this), {
-                terrestrial_sequence: this.#terrestial_sequence.current,
-                root_type: this.root_type,
-                health: this.#energy.current_health,
-                grey_health: this.#energy.grey_health,
-                energy: this.#energy.spirit
-            });
-        }
+    update(config) {
 
     }
 
-    self.Rumbler = Rumbler;
+}
+
+// Rumbler Active State Tree ==========================================================
+function rumbler_ActiveSequenceTree( ) {
+    const tree = new Sequence( );
+    tree.register('nuetral', null);
+    tree.register('attacking', null);
+    tree.register('blocking', null);
+    tree.register('hurt', null);
+    tree.register('movie', null);
+    return true;
+}
+
+
+
+// GROUND STATES ======================================================================
+class Rumbler_Ground extends Sequence {
+
+    constructor( ) {
+        super( );
+    }
+
+    #onGround(tilemap) {
+        const bottom_left = tilemap.findTile(this.left, this.bottom);
+        const bottom_right = tilemap.findTile(this.right, this.bottom);
+        return (bottom_left > 0 || bottom_left > 0);
+    }
+
+    #resolveFloor(tilemap) {
+        if(!this.#onGround) return this.parent.signal('air');
+    }
+
+    operate(config) {
+        this.velocity.y = 0;
+        this.bottom = config.tile_top;
+        this.#resolveFloor( );
+    }
+
+}
+
+
+
+//Ground End ==========================================================================
+
+// AERIAL STATES ======================================================================
+class Rumbler_Aerial extends Sequence {
+
+    constructor( ) {
+        super(  );
+    }
+
+    operate(config) {
+        this.velocity.y += config.gravity * config.seconds;
+    }
+
 }

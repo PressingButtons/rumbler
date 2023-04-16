@@ -39,33 +39,9 @@ class DataBuffer {
 
 }
 
-class Vector {
-
-    /** @type {TypedArray} */
-    #data;
-
-    constructor(float_array) {
-        this.#data = float_array;
-    }
-
-    get x( ) {return this.#data[0]} 
-    set x(n) {this.#data[0] = n}
-
-    get y( ) {return this.#data[1]} 
-    set y(n) {this.#data[1] = n}
-
-    get z( ) {return this.#data[2]} 
-    set z(n) {this.#data[2] = n}
-
-    get xy( ) {return this.#data.subarray(0, 2)}
-    get xyz( ) {return this.#data.subarray(0, 3)}
-
-    set(n) {this.#data.set(n, 0)}
 
 
-}
-
-class GameObject extends EventObject {
+class GameObject {
 
     static #ENNUMERATOR = function*( ) {
         let index = 0;
