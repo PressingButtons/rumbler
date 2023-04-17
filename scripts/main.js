@@ -1,7 +1,7 @@
 import sysmain from "./system/sys_main.js";
 
 window.onload = async function(event) {
-    await sysmain.init( );
+    await sysmain.init( ).catch( err => console.error(err));
 
     sysmain.game_system.createGame({
         mode: 'sandbox', 
@@ -9,5 +9,5 @@ window.onload = async function(event) {
         stage: 'sandbox'
     });
 
-    
+
 }

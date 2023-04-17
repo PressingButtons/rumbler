@@ -25,6 +25,7 @@ self.messenger = (function( ) {
         deleteRoute: function(route_key) {
             self.removeEventListener('message', routes[route_key]);
         }
+
     }
 
 })( );

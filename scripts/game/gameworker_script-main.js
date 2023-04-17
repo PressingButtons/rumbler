@@ -228,7 +228,7 @@ class Game extends Sequence {
 
     //public
     readInput(input) {
-        console.log(input); 
+
     }
 
     step(interval) {
@@ -394,6 +394,5 @@ function centerPoint(x1, y1, x2, y2) {
 //creating a new game environment 
 messenger.setRoute('game', function(message) {
     game = new Game(message);
-    messenger.setRoute('input', game.readInput);
-
+    messenger.setRoute('input', game.readInput.bind(game));
 });
