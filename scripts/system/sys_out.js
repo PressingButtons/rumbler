@@ -5,7 +5,7 @@ const sysout = (( ) => {
     const setGroup = n => {
         if(current != n) {
             console.groupEnd( );
-            console.groupCollapsed(n);
+            console.group(n);
             current = n;
         }
     }

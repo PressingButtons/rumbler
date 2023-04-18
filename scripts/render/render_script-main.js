@@ -14,6 +14,8 @@ const mat4 = glMatrix.mat4;
 const transform_matrix = new Float32Array(16);
 const projection_matrix = new Float32Array(16);
 const crop_matrix = new Float32Array(16);
+/**@type {RenderInstructions} */
+let instructor;
 // =============================================================================
 // =                               INITALIZATION                               = 
 // =============================================================================
@@ -25,6 +27,7 @@ messenger.setRoute('init', async function(message) {
     await precompile(shader_configs, message.uri);
     compilePrograms(shader_configs).then(( ) => messenger.send('init', true))
     .catch(err => messenger.send('init', err));
+    instructor = new RenderInstructions( );
 });
 // =============================================================================
 // =                               COMPLIE SHADER                              = 
@@ -97,9 +100,8 @@ function findUniforms(program, config) {
 }
 
 function getVariable(key, config) {
-    const names = [ ];
-    names.concat(findParameter(config.vertex, key), findParameter(config.fragment, key));
-    return [...new Set(names).values( )];
+    const names = [findParameter(config.vertex, key), findParameter(config.fragment, key)].flat( );
+    return [...new Set(names)];
 }
 
 function findParameter(text, parameter) {
@@ -112,29 +114,37 @@ function findParameter(text, parameter) {
 // =============================================================================
 // =                          WEBGL DRAW UTILITIES                             = 
 // =============================================================================
-function setAttributes(programm, attributes) {
+function setAttribute(program, name, length, stride, offset) {
+    gl.enableVertexAttribArray(name);
+    gl.vertexAttribPointer(program.attributes[name], length, gl.FLOAT, false, stride * 4, offset * 4)
+}
+
+function setAttributes(program, attributes) {
     for(const key in attributes) {
         const config = attributes[key];
-        const attribute = programm.attributes[key];
-        gl.enableVertexAttribArray(key);
-        gl.vertexAttribPointer(attribute, config.legnth, gl.FLOAT, flase, config.stride * 4, config.offset * 4);
+        setAttribute(program, key, config.length, config.stride, config.offset);
     }
+}
+
+function setUniform(program, name, method, params) {
+    gl[method](program.uniforms[name], ...params)
 }
 
 function setUniforms(program, uniforms) {
     for(const key in uniforms) {
         config = uniforms[key];
-        const uniform = program.uniforms[key];
-        gl[config.method](uniform, ...config.params);
+        setUniform(program, key, config.method, config.params);
     }
 }
 
 function setTexture(program, texture_data, index) {
     gl.activeTexture(gl.TEXTURE0 + index);
     gl.bindTexture(gl.TEXTURE_2D, texture_data.texture);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, texture_data.wrap_s);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, texture_data.wrap_t);
-    gl.uniform1i(program.unforms['u_texture_' + index]);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl[texture_data.wrap_s]);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl[texture_data.wrap_t]);
+    console.log(texture_data)
+    gl.uniform1i(program.uniforms['u_texture_' + index], index);
 }
 
 function createBuffer(name, data) {
@@ -144,23 +154,90 @@ function createBuffer(name, data) {
 }
 
 function useProgam(program) {
-    if(active_progam == program) return program;
+    if(active_progam == program.program) return program;
     else if (!program instanceof WebGLProgram) throw 'Error - cannot use invalid WebGLProgram';
-    gl.useProgram(program);
+    gl.useProgram(program.program);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    active_progam = program.program;
+    return program;
 }
 
-function getTextureData(detail) {
-    const texture_data = cache[detail.texture];
-    const crop = texture_data.cropMatrix(crop_matrix, detail.crop);
-    return {texture: texture_data.texutre, cropping: crop, wrap_s: detail.wrap_s, wrap_t: detail.wrap_t};
+function getTextureData(name, crop = null, wrap_s = 'CLAMP_TO_EDGE', wrap_t = 'CLAMP_TO_EDGE') {
+    const src = cache[name];
+    if(crop instanceof Array) src.cropMatrix(crop_matrix, ...crop);
+    else crop = mat4.identity(crop_matrix);
+    console.log(crop_matrix);
+    return { texture: src.texture, crop: crop_matrix, wrap_s: wrap_s, wrap_t: wrap_t, src: src}
+}
+
+// =============================================================================
+// =                             RENDERING INSTRUCTOR                          = 
+// =============================================================================
+class RenderInstructions {
+
+    constructor( ) {
+        this.clear( );
+    }
+
+    clear( ) {
+        this.instructions = {
+            buffer: 'square', program: 'color',
+            attributes: { }, uniforms: { },  textures: [ ], draw_method: 'TRIANGLE_STRIP', first_array: 0, indices: 4
+        };
+    }
+
+    setAttribute(name, length, stride, offset) {
+        this.instructions.attributes[name] = {length: length, stride: stride, offset: offset}
+    }
+
+    setUniform(name, method, params) {
+        this.instructions.uniforms[name] = {method: method, params: params}
+    }
+
+    setUniformMatrix(name, matrix) {
+        this.setUniform(name, 'uniformMatrix4fv', [false, matrix]);
+    }
+
+    setTexture(name, texture, wrap_s = "CLAMP_TO_EDGE", wrap_t = "CLAMP_TO_EDGE") {
+        this.instructions.textures.push({name: name, src:texture, wrap_s: wrap_s, wrap_t: wrap_t});
+    }
+
+    setDraw(method, first, indices) {
+        this.instructions.draw_method = method;
+        this.instructions.first_array = first;
+        this.instructions.indices = indices
+    }
+
+    setProgram(program, buffer = 'square') {
+        this.instructions.program = program;
+        this.instructions.buffer = buffer;
+    }
+
 }
 // =============================================================================
 // =                              RENDERING_METHOD(S)                          = 
 // =============================================================================
 function render(instance) {
-    console.log(instance);
+    const projection = mat4.ortho(projection_matrix, ...instance.camera, 1, -1);
+    renderDefaultStageBackground(projection);
+}
+
+function renderDefaultStageBackground(projection) {
+    const program = useProgam(shaders['single_texture']);
+    const texture_data = getTextureData('stage_pattern');
+    setTexture(program, texture_data, 0);
+    setAttribute(program, 'a_position', 2, 0, 0);
+    setUniform(program, 'u_projection', 'uniformMatrix4fv', [false, projection_matrix]);
+    setUniform(program, 'u_transform', 'uniformMatrix4fv', [false, mat4.fromScaling(transform_matrix, [texture_data.src.width, texture_data.src.height, 1])]);
+    console.log(texture_data)
+    setUniform(program, 'u_tint', 'uniform4f', [1, 1, 1, 1]);
+    //setUniform(program, 'u_crop', 'uniformMatrix4fv', [false, crop_matrix]);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+function createRenderInstructions(object) {
+
 }
 
 const renderMethods = {}
@@ -176,6 +253,10 @@ renderMethods['single_texture'] = function(detail) {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
+function fillColor(r, g, b, a) {
+    gl.clearColor(r, g, b, a);
+    gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+}
 // =============================================================================
 // =                               TEXTURE_OBJECT                              = 
 // =============================================================================
@@ -190,9 +271,9 @@ class TextureObject {
         this.#setTexture(bitmap);
     }
 
-    get width( ) {return bitmap.width}
+    get width( ) {return this.#src.width}
 
-    get height( ) {return bitmap.height}
+    get height( ) {return this.#src.height}
 
     get texture( ){
         return this.#texture;
@@ -210,7 +291,7 @@ class TextureObject {
 
     //public 
     cropMatrix(matrix, x = 0, y = 0, width = this.#src.width, height = this.#src.height) {
-        mat4.fromTranslation([x, y, 0]);
+        mat4.fromTranslation(crop_matrix, [x, y, 0]);
         return mat4.scale(matrix, matrix, [width / this.width, height / this.height, 1]);
     }
 
@@ -219,7 +300,7 @@ class TextureObject {
 // =                                  UTILITY                                  = 
 // =============================================================================
 function getJSON(uri) {
-    const url = new URL('../shaders/config.json', uri);
+    const url = new URL('../shader/config.json', uri);
     return fetch(url).then(res => res.json( ))
 }
 
@@ -247,6 +328,10 @@ messenger.setRoute('bitmaps', function(bitmaps) {
     messenger.send('bitmaps');
 })
 
-messenger.setRoute('render', function(instance) {
+messenger.setRoute('instance', function(instance) {
     render(instance);
+})
+
+messenger.setRoute('color-fill', function(color){
+    fillColor(...color);
 })

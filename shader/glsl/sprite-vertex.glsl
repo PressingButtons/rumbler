@@ -9,5 +9,5 @@ varying vec2 v_texCoord;
 
 void main( ) {
     gl_Position = u_projection * u_transform * vec4(a_position, 1);
-    v_texCoord = a_position.xy * u_texture_inverse;
+    v_texCoord = a_position.xy;
 }

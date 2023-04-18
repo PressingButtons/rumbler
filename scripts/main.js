@@ -3,11 +3,11 @@ import sysmain from "./system/sys_main.js";
 window.onload = async function(event) {
     await sysmain.init( ).catch( err => console.error(err));
 
-    sysmain.game_system.createGame({
-        mode: 'sandbox', 
-        players:[{ team: ['dummy', 'dummy', 'dummy'], controller: 'human:0'}, {team: ['dummy', 'dummy', 'dummy'], controller: 'computer: 0'}],
-        stage: 'sandbox'
-    });
+    const instance = {
+        camera: [0, 800, 450, 0]
+    }
 
+    sysmain.renderer.fill([0.3, 0.3, 0.3, 0.3]);
+    sysmain.renderer.send('instance', instance);
 
 }
