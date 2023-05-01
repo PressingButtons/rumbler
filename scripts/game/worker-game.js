@@ -1,3 +1,7 @@
+/** ========================================================================
+ * Game Constants
+ ==========================================================================*/
+const GAME_ORIGIN = [400, 225, 0]
 
 /** ========================================================================
  * Game
@@ -10,7 +14,7 @@
     #input_delay;
     #player1;
     #player2;
-    #camera = {x: 400, y: 225, width: 576, height: 333}
+    #camera = {x: 0, y: 0, width: 576, height: 333}
 
     constructor(config) {
         super( );
@@ -38,19 +42,22 @@
     }
 
     #setPlayers(players) {
-        this.#player1 = this.#createPlayer(players[0]);
-        this.#player2 = this.#createPlayer(players[1]);
+        this.#player1 = this.#createPlayer(players[0], -200, 100);
+        this.#player2 = this.#createPlayer(players[1],  200, 100);
     }
 
     #packageCamera() {
         const hw = this.#camera.width * 0.5;
         const hh = this.#camera.height * 0.5;
-        return [this.#camera.x - hw, this.#camera.x + hw, this.#camera.y + hh, this.#camera.y - hh];
+        //return [this.#camera.x - hw, this.#camera.x + hw, this.#camera.y + hh, this.#camera.y - hh];
+        return [0, 800, 450, 0];
     }
 
-    #createPlayer(detail) {
+    #createPlayer(detail, x, y) {
         //const rumbler = spawnRumbler(detail.rumbler);
-        const rumbler = new Dummy(50, 80);
+        const rumbler = new Dummy(50, 90);
+        rumbler.position.set([GAME_ORIGIN[0] + x, GAME_ORIGIN[1] + y, 0]);
+        console.log(rumbler.position.xyz, origin);
         const manager = new PlayerManager(rumbler);
         this.database.add(rumbler);
         return manager;
@@ -119,7 +126,6 @@
     }
 
     #serialize( ) {
-        console.log(this.#data.actors[0])
         return {
             actors: this.#data.actors.map(x => x.serialize()),
             over_particles: this.#data.over_particles.map(x => x.serialize ()),

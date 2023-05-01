@@ -177,7 +177,9 @@ function getTextureData(name, rect = null) {
 function render(instance) {
     const projection = setCameraProjection(...instance.camera);
     renderDefaultStageBackground(projection);
-    for(const object of instance.objects) renderObject(object);
+    for(const object of instance.objects.under_particles) renderObject(object);
+    for(const object of instance.objects.actors) renderObject(object);
+    for(const object of instance.objects.over_particles) renderObject(object);
 }
 
 function renderDefaultStageBackground(projection) {
@@ -232,13 +234,14 @@ function createTransform(object) {
     mat4.rotateX(matrix, matrix, object.rotation[0]);
     mat4.rotateY(matrix, matrix, object.rotation[1]);
     mat4.rotateZ(matrix, matrix, object.rotation[2]);
-    mat4.translate(matrix, matrix, [-object.width * 0.5, - object.height * 0.5, 0]);
-    mat4.scale(matrix, matrix, [object.width, object.height, 1]);
+    mat4.translate(matrix, matrix, [-object.size[0] * 0.5, - object.size[1] * 0.5, 0]);
+    mat4.scale(matrix, matrix, [object.size[0], object.size[1], 1]);
     return matrix;
 }
 
 function createCrop(src, rect) {
-    if(!rect) return mat4.fromRotationTranslationScale(crop_matrix, [0, 0, 0, 0], [0, 0, 0], [1 / src.width, 1 / src.height, 1]);
+    //if(!rect) return mat4.fromRotationTranslationScale(crop_matrix, [0, 0, 0, 0], [0, 0, 0], [1 / src.width, 1 / src.height, 1]);
+    if(!rect) return mat4.identity(crop_matrix);
     if(rect instanceof Array) return mat4.fromRotationTranslationScale(crop_matrix, [0, 0, 0, 0], [rect[0], rect[1], 0], [rect[2] / src.width, rect[3] / src.height, 1]);
     else return mat4.fromRotationTranslationScale(crop_matrix, [0, 0, 0, 0], [rect.x, rect.y, 0], [rect.width / src.width, rect.height / src.height, 1])
 }

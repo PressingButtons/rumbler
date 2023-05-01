@@ -127,14 +127,14 @@ class GameObject extends SignalObject {
         this.size = new Vector( );
         this.width = width;
         this.height = height;
-        this.display = {shader: 'single', texture: null, rect: [0, 0, this.width, this.height]}
+        this.display = {shader: 'single', texture: null, rect: null}
     }
 
     get width( ) {return this.size[0]}
-    set width(n) {this.size[0] = Math.min(n, 1)}
+    set width(n) {this.size[0] = Math.max(n, 1)}
 
     get height( ) {return this.size[1]}
-    set height(n) {this.size[1] = Math.min(n, 1)}
+    set height(n) {this.size[1] = Math.max(n, 1)}
 
     get bottom( ) {return this.position.y + this.height * 0.5}
     set bottom(n) {this.position.y = n - this.height * 0.5}
