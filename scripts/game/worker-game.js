@@ -57,7 +57,6 @@ const GAME_ORIGIN = [400, 225, 0]
         //const rumbler = spawnRumbler(detail.rumbler);
         const rumbler = new Dummy(50, 90);
         rumbler.position.set([GAME_ORIGIN[0] + x, GAME_ORIGIN[1] + y, 0]);
-        console.log(rumbler.position.xyz, origin);
         const manager = new PlayerManager(rumbler);
         this.database.add(rumbler);
         return manager;
@@ -74,7 +73,6 @@ const GAME_ORIGIN = [400, 225, 0]
         this.cache_instance = false;
         const instance = this.#createInstance( );
         messenger.send('game-instance', instance)
-        this.stop( );
     }
 
     init(config) {

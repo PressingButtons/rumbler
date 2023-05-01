@@ -23,8 +23,6 @@ window.onload = async function(event) {
 
     system.game.setRoute('game-instance', instance => {
 
-        console.log(instance)
-
         system.renderer.render(instance)
 
     });
