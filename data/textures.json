@@ -1,7 +1,4 @@
 {
-    "directory_uri": "../images/",
-    "textures" : {
-        "placeholder" : "placeholder.webp",
-        "stage_pattern": "stage_pattern.webp"
-    }
+    "placeholder" : "placeholder.webp",
+    "stage_pattern": "stage_pattern.webp"
 }

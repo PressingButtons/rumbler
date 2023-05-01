@@ -64,8 +64,8 @@ class Sequence {
 
     }
 
-    register(name, sequence_value, transition_key = null) {
-        this.#subsequences[name] = {name: name, value: sequence_value, transition_key: transition_key};
+    register(name, sequence_value, ...transition_keys) {
+        this.#subsequences[name] = {name: name, value: sequence_value, transition_keys: transition_keys};
         if(sequence_value instanceof Sequence) sequence_value.parent = this;
         return this;
     }
@@ -83,7 +83,7 @@ class Sequence {
 
     signal(name, options) {
         if(this.#subsequences[name])
-            if(!this.current || this.current.transition_key == null || this.current.transition_key == name)
+            if(!this.current || this.current.transition_keys.indexOf(name) > -1)
                 this.#useSequence(name, options);
         return this;   
     }
@@ -135,6 +135,8 @@ class PlayerManager extends Sequence {
 // 02:04 GameObject -------------------------------------------------
 class GameObject extends Sequence {
 
+    #animations = { };
+
     constructor(width, height) {
         super( );
         this.position = new Vector( );
@@ -161,6 +163,10 @@ class GameObject extends Sequence {
     #move(seconds) {
         this.position.x += this.velocity.x * seconds;
         this.position.y += this.velocity.y * seconds;
+    }
+
+    animate(name, interval) {
+        
     }
 
     operate(detail) {
@@ -319,7 +325,146 @@ class Rumbler extends GameObject {
 
     constructor(config) {
         super(config.width, config.height);
+        this.stats = {health: 10000, energy: 3000, f_walk: 10, b_walk: 5, f_dash: 20, b_dask: 10, jump: 180};
+        this.pools = {health: 10000, energy: 1000}
         this.textures = [ ];
+    }
+
+    get health( ) { return this.pools.health;}
+    set health(n) {
+        n = Math.min(0, n);
+        n = Math.max(n, this.stats.health);
+        this.pools.health = n;
+    }
+
+    get energy( ) { return this.pools.energy;}
+    set energy(n) {
+        n = Math.min(0, n);
+        n = Math.max(n, this.stats.energy);
+        this.pools.energy = this.energy
+    }
+
+    #createGroundSeuence(self) {
+ 
+    }
+
+    #createAeriaSequence(self) {
+
+    }
+
+    #setBasicSequences( ) {
+        
+    }
+
+}
+
+// Rumbler: Sequences -------------------------------------------------
+class RumblerSequence {
+    #host;
+    constructor(host) { 
+        this.#host = host; 
+    }
+    get host( ) {
+        return host
+    }
+}
+
+class RumblerGround {
+
+    constructor(host) {
+        super(host);
+    }
+    
+    #applyFriction(config) {
+        if(this.host.velocity.x != 0) this.host.velocity.x *= 0.8;
+        if(Math.abs(this.host.velocity.x) < 1) this.host.velocity.x = 0;
+    }
+
+    operate(config) {
+        this.#applyFriction(config);
+    }
+}
+
+
+class RumblerStand extends RumblerSequence {
+    constructor(host) {
+        super(host);
+        this.register('idle', new RumblerIdle(host));
+        this.register('walk', new RumblerWalk(host));
+        this.register('standing', new RumblerStanding(host));
+    }
+}
+
+class RumblerIdle extends RumblerSequence {
+    constructor(host) {
+        super(host);
+    }
+
+    operate(config) {
+        this.host.animate('idle', config.interval);
+    }
+
+}
+
+class RumblerWalk extends RumblerSequence {
+    constructor(host) {
+        super(host);
+    }
+
+    #rightward(config) {
+        if(this.host.facing == 1) {
+            this.animate('walk_forward', config.interval);
+            this.velocity.x = this.host.stats.f_walk * config.seconds; 
+        } else {
+            this.animate('walk_backward', config.interval);
+            this.velocity.x = -this.host.stats.b_walk * config.seconds;
+        }
+    }
+
+    #leftward(interval) {
+        if(this.host.facing == -1) {
+            this.animate('walk_forward', config.interval);
+            this.velocity.x = -this.host.stats.f_walk * config.seconds; 
+        } else {
+            this.animate('walk_backward', config.interval);
+            this.velocity.x = this.host.stats.b_walk * config.seconds;
+        }
+    }
+
+    operate(config) {
+        if(config.right) this.#rightward(interval);
+        else if(config.left) this.#leftward(interval);
+    }
+}
+
+class RumblerStanding extends RumblerSequence {
+    constructor(host) {
+        super(host);
+    }
+
+    operate(config) {
+        this.host.animate('standing', config.interval);
+    }
+}
+
+class RumblerCrouch extends RumblerSequence {
+
+    constructor(host) {
+        super(host);
+    }
+
+}
+
+// Aerial States --------------------=============================
+
+class RumblerAerial extends RumblerSequence {
+
+    constructor(host) {
+        super(host);
+    }
+
+    operate(config) {
+        this.host.velocity.y += GRAVITY * config.interval;
     }
 
 }

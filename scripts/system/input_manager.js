@@ -1,30 +1,35 @@
-import sys_input_init from "./sys_input.js"
+import SignalObject from "./signal_object.js";
 import VirtualController from "./virtual_controller.js";
 
+const input_manager = new SignalObject( );
+
 const controllers = {
-    p1: {id: 'keyboard', controller: new VirtualController( ).DEFAULT_KEYBOARD( )},
-    p2: {id: 'gamepad', controller: new VirtualController( ).DEFAULT_PLAYSTATION( )}
+    p1: {id: 'keyboard', vc: new VirtualController( ).DEFAULT_KEYBOARD( )},
+    p2: {id: 'gamepad',  vc: new VirtualController( ).DEFAULT_PLAYSTATION( )}
 }
 
-function oninput(detail) {
-    console.log(detail.type);
-    for(const name in controllers) 
-        if(controllers[name].id == detail.type) 
-            controllers[name].controller.set(detail);
+document.addEventListener('inputevent', event => {
+    input_manager.signal('input', event.detail);
+});
+
+input_manager.setHook('input', function(options) {
+    for(const id in controllers) updateController(controllers[id], options);
+});
+
+function updateController(controller, options) {
+    if(controller.id != options.type) return;
+    controller.vc.set(options);
 }
 
-function serialize( ) {
+input_manager.serialize = ( ) => {
     return {
-        p1: controllers.p1.controller.serialize( ),
-        p2: controllers.p2.controller.serialize( )
+        p1: controllers.p1.vc.serialize( ),
+        p2: controllers.p2.vc.serialize( )
     }
 }
 
-const input_manager = { };
-
-input_manager.update = function(detail) {
-    oninput(detail);
-    return serialize( );
+input_manager.configureController = (id, options) => {
+    ///
 }
 
 export default input_manager;

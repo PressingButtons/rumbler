@@ -7,7 +7,7 @@ function SystemUtilities( ) {
         get base_uri( ) {return base_uri },
 
         fetchJSON: function(url) {
-            return fetch(new URL(url, base_uri)).then(res => res.json( ));
+            return fetch(new URL(url, base_uri)).then(res => res.json( )).catch(err => console.error(url, '\n', err));
         },
 
         fetchText: function(url) {

@@ -1,18 +1,27 @@
 import WrappedWebWorkerES6 from "../webworker/webworker_wrapped_es6.js";
 
-export default class GameWorkerES6 extends WrappedWebWorkerES6 {
+class GameWorkerES6 extends WrappedWebWorkerES6 {
 
     constructor( ) {
-        super(new URL('gameworker_script-main.js', import.meta.url));
-    }
-
-
-    init(bitmaps) {
-        return this.sendAsync('maps', bitmaps, Object.values(bitmaps));
+        super(new URL('worker-driver.js', import.meta.url));
     }
 
     async createGame(config) {
         await this.sendAsync('game', config);
     }
 
+    sendInput(detail) {
+        this.send('game-input', detail);
+    }
+
+    stop( ) {
+        this.send('game-stop');
+    }
+
+    play( ) {
+        this.send('game-play');
+    }
+
 }
+
+export default new GameWorkerES6( );

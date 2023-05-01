@@ -26,7 +26,7 @@ export default class VirtualController {
     }
 
     set(config) {
-        if(config.type=='keyboard') this.#setValue(config.key, config.value);
+        if(config.type =='keyboard') this.#setValue(config.key, config.value);
         else this.#setGamepadValues(config.value);
         return this;
     }

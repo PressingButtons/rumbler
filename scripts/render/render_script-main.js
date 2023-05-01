@@ -14,8 +14,12 @@ const mat4 = glMatrix.mat4;
 const transform_matrix = new Float32Array(16);
 const projection_matrix = new Float32Array(16);
 const crop_matrix = new Float32Array(16);
-/**@type {RenderInstructions} */
-let instructor;
+const origin = [400, 225, 0];
+const render_template = {
+    buffer: 'square', program: 'color',
+    attributes: { }, uniforms: { },  textures: [ ], draw_method: 'TRIANGLES', first_array: 0, indices: 4
+}
+
 // =============================================================================
 // =                               INITALIZATION                               = 
 // =============================================================================
@@ -27,10 +31,9 @@ messenger.setRoute('init', async function(message) {
     await precompile(shader_configs, message.uri);
     compilePrograms(shader_configs).then(( ) => messenger.send('init', true))
     .catch(err => messenger.send('init', err));
-    instructor = new RenderInstructions( );
 });
 // =============================================================================
-// =                               COMPLIE SHADER                              = 
+// =                               COMPILE SHADER                              = 
 // =============================================================================
 async function precompile(config, uri) {
     for(const program_name in config) {
@@ -137,13 +140,12 @@ function setUniforms(program, uniforms) {
     }
 }
 
-function setTexture(program, texture_data, index) {
+function setTexture(program, source, index) {
     gl.activeTexture(gl.TEXTURE0 + index);
-    gl.bindTexture(gl.TEXTURE_2D, texture_data.texture);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl[texture_data.wrap_s]);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl[texture_data.wrap_t]);
-    console.log(texture_data)
+    gl.bindTexture(gl.TEXTURE_2D, source.texture);
+    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl[texture_data.wrap_s]);
+    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl[texture_data.wrap_t]);
     gl.uniform1i(program.uniforms['u_texture_' + index], index);
 }
 
@@ -153,7 +155,7 @@ function createBuffer(name, data) {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
 }
 
-function useProgam(program) {
+function useProgram(program) {
     if(active_progam == program.program) return program;
     else if (!program instanceof WebGLProgram) throw 'Error - cannot use invalid WebGLProgram';
     gl.useProgram(program.program);
@@ -163,93 +165,50 @@ function useProgam(program) {
     return program;
 }
 
-function getTextureData(name, crop = null, wrap_s = 'CLAMP_TO_EDGE', wrap_t = 'CLAMP_TO_EDGE') {
-    const src = cache[name];
-    if(crop instanceof Array) src.cropMatrix(crop_matrix, ...crop);
-    else crop = mat4.identity(crop_matrix);
-    console.log(crop_matrix);
-    return { texture: src.texture, crop: crop_matrix, wrap_s: wrap_s, wrap_t: wrap_t, src: src}
+function getTextureData(name, rect = null) {
+    const src = cache[name] || cache['placeholder'];
+    const crop = createCrop(src, rect);
+    return {src: src, crop: crop}
 }
 
-// =============================================================================
-// =                             RENDERING INSTRUCTOR                          = 
-// =============================================================================
-class RenderInstructions {
-
-    constructor( ) {
-        this.clear( );
-    }
-
-    clear( ) {
-        this.instructions = {
-            buffer: 'square', program: 'color',
-            attributes: { }, uniforms: { },  textures: [ ], draw_method: 'TRIANGLE_STRIP', first_array: 0, indices: 4
-        };
-    }
-
-    setAttribute(name, length, stride, offset) {
-        this.instructions.attributes[name] = {length: length, stride: stride, offset: offset}
-    }
-
-    setUniform(name, method, params) {
-        this.instructions.uniforms[name] = {method: method, params: params}
-    }
-
-    setUniformMatrix(name, matrix) {
-        this.setUniform(name, 'uniformMatrix4fv', [false, matrix]);
-    }
-
-    setTexture(name, texture, wrap_s = "CLAMP_TO_EDGE", wrap_t = "CLAMP_TO_EDGE") {
-        this.instructions.textures.push({name: name, src:texture, wrap_s: wrap_s, wrap_t: wrap_t});
-    }
-
-    setDraw(method, first, indices) {
-        this.instructions.draw_method = method;
-        this.instructions.first_array = first;
-        this.instructions.indices = indices
-    }
-
-    setProgram(program, buffer = 'square') {
-        this.instructions.program = program;
-        this.instructions.buffer = buffer;
-    }
-
-}
 // =============================================================================
 // =                              RENDERING_METHOD(S)                          = 
 // =============================================================================
 function render(instance) {
-    const projection = mat4.ortho(projection_matrix, ...instance.camera, 1, -1);
+    const projection = setCameraProjection(...instance.camera);
     renderDefaultStageBackground(projection);
+    for(const object of instance.objects) renderObject(object);
 }
 
 function renderDefaultStageBackground(projection) {
-    const program = useProgam(shaders['single_texture']);
-    const texture_data = getTextureData('stage_pattern');
-    setTexture(program, texture_data, 0);
+    const program = useProgram(shaders['single_texture']);
+    const source = getTextureData('stage_pattern');
+    setTexture(program, source.src, 0);
     setAttribute(program, 'a_position', 2, 0, 0);
-    setUniform(program, 'u_projection', 'uniformMatrix4fv', [false, projection_matrix]);
-    setUniform(program, 'u_transform', 'uniformMatrix4fv', [false, mat4.fromScaling(transform_matrix, [texture_data.src.width, texture_data.src.height, 1])]);
-    console.log(texture_data)
+    setUniform(program, 'u_projection', 'uniformMatrix4fv', [false, projection]);
+    setUniform(program, 'u_transform', 'uniformMatrix4fv', [false, createStageTransform(source.src)]);
     setUniform(program, 'u_tint', 'uniform4f', [1, 1, 1, 1]);
     //setUniform(program, 'u_crop', 'uniformMatrix4fv', [false, crop_matrix]);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
-function createRenderInstructions(object) {
 
+function renderObject(object) {
+    switch(object.display.shader) {
+        default: renderSequences['single_texture'](object); return;
+    }
 }
 
-const renderMethods = {}
+const renderSequences = { };
 
-renderMethods['single_texture'] = function(detail) {
-    const texture_data = getTextureData(detail.textures[0], detail.uniforms);
-    const program = useProgam(shaders['single_texture']);
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.square);
-    setAttributes(detail.attributes);
-    setUniforms(detail.uniforms);
-    setUniforms(program, {u_crop: {method: 'uniformMatrix4fv', params: [false, texture_data.cropping]}})
-    setTexture(program, texture_data, 0);
+renderSequences['single_texture'] = object => {
+    const program = useProgram(shaders['single_texture']);
+    const texture = getTextureData(object.display.texture);
+    setTexture(program, texture.src, 0);
+    setAttribute(program, 'a_position', 2, 0, 0);
+    setUniform(program, 'u_projection', 'uniformMatrix4fv', [false, projection_matrix]);
+    setUniform(program, 'u_transform',  'uniformMatrix4fv', [false, createTransform(object)]);
+    setUniform(program, 'u_tint',       'uniform4f', [1, 1, 1, 1]);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
@@ -257,50 +216,57 @@ function fillColor(r, g, b, a) {
     gl.clearColor(r, g, b, a);
     gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 }
+
+function setCameraProjection(left, right, bottom, top) {
+    const matrix = mat4.ortho(projection_matrix, left, right, bottom, top, 1, -1);
+    return matrix;
+}
+
+function createStageTransform(texture) {
+    const matrix = mat4.fromRotationTranslationScale(transform_matrix, [0, 0, 0, 0], [0, 0, 0], [texture.width, texture.height, 1]);
+    return matrix;
+}
+
+function createTransform(object) {
+    const matrix = mat4.fromTranslation(transform_matrix, object.position);
+    mat4.rotateX(matrix, matrix, object.rotation[0]);
+    mat4.rotateY(matrix, matrix, object.rotation[1]);
+    mat4.rotateZ(matrix, matrix, object.rotation[2]);
+    mat4.translate(matrix, matrix, [-object.width * 0.5, - object.height * 0.5, 0]);
+    mat4.scale(matrix, matrix, [object.width, object.height, 1]);
+    return matrix;
+}
+
+function createCrop(src, rect) {
+    if(!rect) return mat4.fromRotationTranslationScale(crop_matrix, [0, 0, 0, 0], [0, 0, 0], [1 / src.width, 1 / src.height, 1]);
+    if(rect instanceof Array) return mat4.fromRotationTranslationScale(crop_matrix, [0, 0, 0, 0], [rect[0], rect[1], 0], [rect[2] / src.width, rect[3] / src.height, 1]);
+    else return mat4.fromRotationTranslationScale(crop_matrix, [0, 0, 0, 0], [rect.x, rect.y, 0], [rect.width / src.width, rect.height / src.height, 1])
+}
 // =============================================================================
 // =                               TEXTURE_OBJECT                              = 
 // =============================================================================
-class TextureObject {
+function createTexture(bitmap) {
+    const texture = gl.createTexture( );
+    bindTexture(texture, bitmap);
+    return {texture: texture, width: bitmap.width, height: bitmap.height}
+}
 
-    #src;
-    #texture;
-
-    constructor(bitmap) {
-        this.#src = bitmap;
-        this.#texture = gl.createTexture( );
-        this.#setTexture(bitmap);
-    }
-
-    get width( ) {return this.#src.width}
-
-    get height( ) {return this.#src.height}
-
-    get texture( ){
-        return this.#texture;
-    }
-
-    #setTexture(bitmap) {
-        gl.bindTexture(gl.TEXTURE_2D, this.#texture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, bitmap);
-        if(powerOf2(bitmap.width, bitmap.height)) return gl.generateMipmap(gl.TEXTURE_2D);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    }
-
-    //public 
-    cropMatrix(matrix, x = 0, y = 0, width = this.#src.width, height = this.#src.height) {
-        mat4.fromTranslation(crop_matrix, [x, y, 0]);
-        return mat4.scale(matrix, matrix, [width / this.width, height / this.height, 1]);
-    }
-
+function bindTexture(texture, bitmap) {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, bitmap);
+    //
+    if(powerOf2(bitmap.width, bitmap.height)) return gl.generateMipmap(gl.TEXTURE_2D);
+    //
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 }
 // =============================================================================
 // =                                  UTILITY                                  = 
 // =============================================================================
 function getJSON(uri) {
-    const url = new URL('../shader/config.json', uri);
+    const url = new URL('./shader/config.json', uri);
     return fetch(url).then(res => res.json( ))
 }
 
@@ -324,7 +290,8 @@ function syserror(group, ...messages) {
 // =                                  ROUTES                                   = 
 // =============================================================================
 messenger.setRoute('bitmaps', function(bitmaps) {
-    for(const name in bitmaps) cache[name] = new TextureObject(bitmaps[name])
+    for(const name in bitmaps) cache[name] = createTexture(bitmaps[name]);
+    console.log('[System], Bitmaps loaded');
     messenger.send('bitmaps');
 })
 
