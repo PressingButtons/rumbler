@@ -16,24 +16,19 @@ const GAME_ORIGIN = [400, 225, 0]
     #player2;
     #camera = {x: 0, y: 0, width: 576, height: 333}
 
-    constructor(config) {
+    constructor( ) {
         super( );
-        this.#init(config);
-    }
-
-    get step( ) {
-        return this.#step;
-    }
-
-    #init( ) {
         this.database = new GameDatabase( );
         this.state_stack = new GameStateStack( );
         this.cache_instance = false;
-        return this;
+    }
+
+    get seconds( ) {
+        return this.#step;
     }
 
     #setStep(num) {
-        if(num) this.#step = num;
+        if(num) this.#step = 1 / num;
         else this.#step = 1 / 60;
     }
 
@@ -42,8 +37,8 @@ const GAME_ORIGIN = [400, 225, 0]
     }
 
     #setPlayers(players) {
-        this.#player1 = this.#createPlayer(players[0], -200, 100);
-        this.#player2 = this.#createPlayer(players[1],  200, 100);
+        this.#player1 = this.#createPlayer(players[0], -90, 100);
+        this.#player2 = this.#createPlayer(players[1],  90, 100);
     }
 
     #packageCamera() {
@@ -83,8 +78,8 @@ const GAME_ORIGIN = [400, 225, 0]
 
     handleInput(config) {
         if(!this.#player1) return;
-        this.#player1.readInput(config);
-        this.#player2.readInput(config);
+        this.#player1.readInput(config.p1);
+        this.#player2.readInput(config.p2);
     }
 
     stop( ) {
@@ -139,7 +134,8 @@ const GAME_ORIGIN = [400, 225, 0]
         if(object instanceof ActionObject) this.#data.actors.push(object);
     }
 
-    update(config) {
+    update(game) {
+        const config = {database: this, seconds: game.seconds}
         this.#updateParticles(config);
         this.#updateActors(config);
         return this.#serialize( );
@@ -156,7 +152,6 @@ const GAME_ORIGIN = [400, 225, 0]
     }
 
     set(timestamp, instance, cache = false) {
-        
         if(cache) this.#cached[timestamp] = instance;
     }
 
@@ -178,17 +173,28 @@ const GAME_ORIGIN = [400, 225, 0]
  ==========================================================================*/
 class PlayerManager {
 
-    #input = {
-        flags: { left: 0, right: 0, up: 0, down: 0, a: 0, b: 0, c: 0, d: 0},
-        log: []
-    }
+    #input = { };
+    #log = []
 
     constructor(rumbler) {
         this.rumbler = rumbler;
+        rumbler.buttons = this.#input;
     }
 
-    readInput(input) {
+    #clearButtons( ) {
+        for(let key in this.#input) this.#input[key] = 0;
+    }
 
+    #parseInput(input) {
+        Object.assign(this.#input, input); 
+        if(this.#input.left && this.#input.right) this.#input.left = this.#input.right = 0;
+        if(this.#input.up   && this.#input.down) this.#input.down  = this.#input.up    = 0;
+    }
+    
+    readInput(input) {
+        this.#clearButtons( );
+        this.#parseInput(input);
+        
     }
 
 

@@ -8,6 +8,7 @@
     constructor(config) {
         super(config);
         this.#setHooks( );
+        this.buttons = null;
     }
 
     #setHooks( ) {
@@ -33,7 +34,6 @@
     serialize( ) {
         return Object.assign(ActionObject.prototype.serialize.call(this), { });
     }
-
 }
 
 /** ========================================================================
@@ -43,9 +43,12 @@
  ==========================================================================*/
 class Dummy extends ActionObject {
     
+    static SPEED = 40;
+
     constructor(width, height){
         super({width: width, height: height});
         this.#setHooks( );
+        this.buttons = null;
     }
 
     #setHooks( ) {
@@ -56,23 +59,37 @@ class Dummy extends ActionObject {
     }
 
     #left(options) {
-        this.velocity.x = -5 * options.seconds;
+        this.velocity.x = -Dummy.SPEED;
+
     }
 
     #right(options) {
-        this.velocity.x =  5 * options.seconds;
+        this.velocity.x =  Dummy.SPEED;
     }
 
     #up(options) {
-        this.velocity.y = -5 * options.seconds;
+        this.velocity.y = -Dummy.SPEED;
     }
 
     #down(options) {
-        this.velocity.y = +5 * options.seconds;
+        this.velocity.y =  Dummy.SPEED;
     }
 
     update(options) {
        this.velocity.set([0, 0, 0]);
+    }
+
+    clearButtons( ) {
+        this.buttons.set([0, 0, 0, 0, 0, 0, 0, 0]);
+    }
+
+    update(config) {
+        this.velocity.set([0, 0, 0]);
+        if(this.buttons.up)     this.#up(config)
+        if(this.buttons.left)   this.#left(config)
+        if(this.buttons.down)   this.#down(config)
+        if(this.buttons.right)  this.#right(config)
+        this.move(config.seconds);
     }
 
 }
