@@ -1,8 +1,8 @@
 /** ========================================================================
  * Global Variables 
  ==========================================================================*/
- let current_game = null;
- const GRAVITY = 100, GROUND = 220, FRICTION = 0.5, STAGE_BOUNDS = { LEFT: -400, RIGHT: 400, BOTTOM: 240, TOP: -240};
+ const GRAVITY = 1000, GROUND = 380, FRICTION = 0.5, STAGE_BOUNDS = { LEFT: -400, RIGHT: 400, BOTTOM: 240, TOP: -240};
+
  
 /** ========================================================================
  * Signal Object 
@@ -37,6 +37,67 @@ class SignalObject {
         const hook = this.#hooks[key];
         if(!hook) return;
         for(const method of hook) method(options);
+    }
+
+}
+
+class Rect {
+
+    constructor(x, y, width, height) {
+
+        this.point = new Point(x, y); 
+        this.width = width;
+        this.height = height;
+    }
+    
+
+    get top( ) {return this.point.y - this.height * 0.5}
+    set top(n) {this.point.y = n + this.height * 0.5}
+
+    get left( ) {return this.point.x - this.width * 0.5}
+    set left(n) {this.point.x = n + this.width * 0.5}
+
+    get right( ) {return this.point.x + this.width * 0.5}
+    set right(n) {this.point.x = n - this.width * 0.5}
+
+    get bottom( ) {return this.point.y + this.height * 0.5}
+    set bottom(n) {this.point.y = n - this.height * 0.5 }
+
+    get top_left( ) {return new Point(this.left, this.top)}
+
+    set top_left(point) {
+        if(point.x || point[0]) this.point.set(point);
+    }
+
+    set(value) {
+        if(value.x && value.y && value.width, value.height) {
+            this.point.set(value);
+            this.width = value.width;
+            this.height = value.height;
+        } else if(value.point && value.width && value.height) {
+            this.point.set(point);
+            this.width = value.width;
+            this.height = value.height;
+        }
+    }
+
+}
+
+class Point {
+
+    constructor(x, y) {
+        this.x = x; 
+        this.y = y;
+    }
+
+    set(value) {
+        if(value.x && value.y) {
+            this.x = value.x;
+            this.y = value.y;
+        } else if (value instanceof Array && value.length > 1) {
+            this.x = value[0];
+            this.y = value[1];
+        }
     }
 
 }
@@ -167,8 +228,8 @@ class ActionObject extends GameObject {
 
     constructor(config) {
         super(config.width, config.height);
-        this.body = config.body || {width: this.width, height: this.height};
         this.velocity = new Vector( );
+        this.#createBody(config);
     }
 
     get left( )     {return this.position.x - this.body.width * 0.5}
@@ -183,6 +244,11 @@ class ActionObject extends GameObject {
     get bottom( )   {return this.position.y + this.body.height * 0.5}
     set bottom(n)   {this.position.y = n - this.body.height * 0.5}
 
+    #createBody(config) {
+        this.body = new Rect(0, 0, this.width, this.height);
+        if(config.body) this.body.set(config.body);
+    }
+
     serialize( ) {
         return Object.assign(GameObject.prototype.serialize.call(this), {
             body: this.body, 
@@ -193,8 +259,12 @@ class ActionObject extends GameObject {
     move(seconds) {
         this.position.add(this.velocity, seconds);
     }
+
+    collisionCheck(object) {
+           
+        return false;
+    }
     
     update( ) { }
 
 }
-

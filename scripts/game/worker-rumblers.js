@@ -19,6 +19,8 @@
     #onGround(config) {
         if(this.velocity.x != 0) this.velocity.x *= FRICTION * config.seconds; 
         if(Math.abs(this.velocity.x) < FRICTION) this.velocity.x = 0;
+        this.bottom = GROUND;
+        this.velocity.y = 0;
     }
 
     #inAir(config) {
@@ -101,8 +103,31 @@ class Dummy extends ActionObject {
  ==========================================================================*/
  class DummyRumbler extends Rumbler {
 
-    constructor(config) {
-        super(config);
+    constructor(width, height) {
+        super({width: width, height: height});
+        this.#setHooks( );
+    }
+
+    #setHooks( ) {
+        this.setHook('ground', this.#onGround.bind(this));
+    }
+
+    #onGround(config) {
+
+        if(this.buttons.right) this.velocity.x =  80;
+        if(this.buttons.left)  this.velocity.x = -80;
+
+        if(this.buttons.up) {
+            this.velocity.y = -Math.pow(2 * GRAVITY * 120, 0.5);
+            if(this.buttons.right) this.velocity.x =  110;
+            if(this.buttons.left)  this.velocity.x = -110;
+        }
+
+    }
+
+    update(config) {
+        Rumbler.prototype.update.call(this, config);
+
     }
 
  }

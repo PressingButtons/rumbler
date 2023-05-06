@@ -14,7 +14,7 @@ const GAME_ORIGIN = [400, 225, 0]
     #input_delay;
     #player1;
     #player2;
-    #camera = {x: 0, y: 0, width: 576, height: 333}
+    #camera = {x: 0, y: 50, width: 800, height: 450, scale: 1.8}
 
     constructor( ) {
         super( );
@@ -37,20 +37,25 @@ const GAME_ORIGIN = [400, 225, 0]
     }
 
     #setPlayers(players) {
-        this.#player1 = this.#createPlayer(players[0], -90, 100);
+        this.#player1 = this.#createPlayer(players[0], -90, -100);
         this.#player2 = this.#createPlayer(players[1],  90, 100);
     }
 
     #packageCamera() {
-        const hw = this.#camera.width * 0.5;
-        const hh = this.#camera.height * 0.5;
+        const x = GAME_ORIGIN[0] + this.#camera.x;
+        const y = GAME_ORIGIN[1] + this.#camera.y;
+        const w = this.#camera.width / this.#camera.scale;
+        const h = this.#camera.height / this.#camera.scale;
+        return [
+            x - w * 0.5, x + w * 0.5, y + h * 0.5, y - h * 0.5
+        ]
         //return [this.#camera.x - hw, this.#camera.x + hw, this.#camera.y + hh, this.#camera.y - hh];
         return [0, 800, 450, 0];
     }
 
     #createPlayer(detail, x, y) {
         //const rumbler = spawnRumbler(detail.rumbler);
-        const rumbler = new Dummy(50, 90);
+        const rumbler = new DummyRumbler(50, 90);
         rumbler.position.set([GAME_ORIGIN[0] + x, GAME_ORIGIN[1] + y, 0]);
         const manager = new PlayerManager(rumbler);
         this.database.add(rumbler);
