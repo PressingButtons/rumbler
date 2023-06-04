@@ -1,3 +1,4 @@
+/*
 import scene_manager from "../scene_manager.js";
 import input_manager from "./system/input_manager.js";
 import sys_init from "./system/sys_init.js"
@@ -29,5 +30,13 @@ window.onload = async function(event) {
     console.log('starting game');
 
     system.game.play( );
+
+}
+*/
+import * as System from './system/driver.js';
+
+window.onload = async event => {
+
+    System.init( );
 
 }

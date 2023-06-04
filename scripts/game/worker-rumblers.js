@@ -21,20 +21,48 @@
         if(Math.abs(this.velocity.x) < FRICTION) this.velocity.x = 0;
         this.bottom = GROUND;
         this.velocity.y = 0;
+        this.body.width = this.width;
     }
 
     #inAir(config) {
         this.velocity.y += config.seconds * GRAVITY;
+        this.body.width = this.width * 0.5;
+    }
+
+    #collideRumbler(rumbler) {
+        this.#collideBodies(rumbler);
+        this.#collideHitzones(rumbler);
+    }
+
+    #collideHitzones(rumbler) {
+
+    }
+
+    #collideBodies(object) {
+        const collision = Collider.RectVsRect(this, object);
+        console.log(collision);
+        if(!collision) return;
+        if(this.position.x < object.position.x) {
+            const overlap = this.right - object.left;
+            this.position.x -= overlap * 0.5;
+            object.position.x += overlap * 0.5;
+        }
     }
 
     update(config) {
         this.move(config.seconds);
+        for(const actor of config.database.actors) this.collide(actor);
         if(this.bottom >= GROUND) this.signal('ground', config);
         else this.signal('aerial', config);
     }
 
     serialize( ) {
         return Object.assign(ActionObject.prototype.serialize.call(this), { });
+    }
+
+    collide(object) {
+        if(object == this) return;
+        if(object instanceof Rumbler) this.#collideRumbler(object);
     }
 }
 

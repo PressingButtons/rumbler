@@ -114,6 +114,10 @@ const GAME_ORIGIN = [400, 225, 0]
 
     }
 
+    get actors( ) {
+        return this.#data.actors;
+    }
+
     #updateParticles(config) {
 
     }

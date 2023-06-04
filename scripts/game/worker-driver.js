@@ -1,5 +1,6 @@
 importScripts(
     '../webworker/webworker_messenger.js',
+    './rect_collision.js',
     './worker-base.js',
     './worker-game.js',
     './worker-rumblers.js'
