@@ -1,6 +1,8 @@
 import Graphics from "../graphics/graphics.js";
 import GameWorker from "../game/game-worker.js";
 import preload from "./preload.js";
+import Operator from "./singletons/operator.js";
+import InputManager from "./singletons/inputmanager.js";
 
 let graphics, gamesystem;
 
@@ -14,6 +16,7 @@ export async function init( ) {
     const cache = await preload( );
     await setupGraphics(cache.bitmaps);
     gamesystem = new GameWorker( );
+    Operator.add( InputManager.update.bind(InputManager) )
     test2( );
 }
 
@@ -50,5 +53,12 @@ function test( ) {
 }
 
 function test2( ) {
-    gamesystem.createGame( graphics );
+    gamesystem.createGame( );
+    gamesystem.setRoute('state', message => {
+        graphics.render(message);
+    })
+
+    InputManager.setRoute('keydown', event => {
+        console.log( [...InputManager.keyboard])
+    })
 }

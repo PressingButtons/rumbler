@@ -35,8 +35,7 @@ importScripts(
 //==========================================================
 //route to create new game environment
 messenger.setRoute('create-game', message => {
-    const data = GameSystem.createGame( message );
-    messenger.sendMessage('create-game', {status: true, content: data});
+    GameSystem.Manager.create( message );
 });
 //==========================================================
 //

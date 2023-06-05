@@ -17,5 +17,9 @@ GameSystem.GameInstance = class extends Signaler {
     closeRoutes( )  {
 
     }
+
+    update( ) {
+        return this.currentState( );
+    }
     
 }
