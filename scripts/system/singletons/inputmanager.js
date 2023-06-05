@@ -1,4 +1,4 @@
-import signalobject from "../objects/signalobject.js"
+import SignalObject from "../objects/signalobject.js"
 //==========================================================
 // Create Input Template for Game
 //==========================================================
@@ -22,7 +22,7 @@ const scheme_template = {
 //==========================================================
 //  Create Input Manager Object - Signaler
 //==========================================================
-const InputManager = new signalobject( );
+const InputManager = new SignalObject
 //==========================================================
 //  Create Player1 and Player2 Inputs
 //==========================================================
@@ -48,7 +48,7 @@ document.addEventListener('keyup', event => {
 //  Updating Player Input
 //==========================================================
 InputManager.update = function(timestamp) {
-    if( p1.source == 'keyboard') this.updateByKeyboard( this.p1, timestamp );
+    if( InputManager.p1.source == 'keyboard') InputManager.updateByKeyboard( InputManager.p1, timestamp );
 }
 //==========================================================
 //  Updating Player Input by Keyboard
@@ -81,9 +81,9 @@ InputManager.handleRelease = function( button ) {
 //  Setting Controller Scheme
 //==========================================================
 InputManager.setScheme = function( p_id, source, buttons) {
-    this[p_id].source = source; 
-    for(const button_name in this[p_id].buttons) {
-        if( buttons[button_name] ) this[p_id].buttons[button_name].key = buttons[button_name];
+    InputManager[p_id].source = source; 
+    for(const button_name in InputManager[p_id].buttons) {
+        if( buttons[button_name] ) InputManager[p_id].buttons[button_name].key = buttons[button_name];
     }
 }
 //==========================================================

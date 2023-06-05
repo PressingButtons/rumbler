@@ -16,7 +16,7 @@ export async function init( ) {
     const cache = await preload( );
     await setupGraphics(cache.bitmaps);
     gamesystem = new GameWorker( );
-    Operator.add( InputManager.update.bind(InputManager) )
+    Operator.add( 'input', InputManager.update.bind(InputManager) )
     test2( );
 }
 
@@ -27,18 +27,6 @@ function test( ) {
         0, 0, 1, 0,
         0, 0, 0, 1
     ])
-
-    /*
-
-    graphics.render({
-        shader:     'single_texture',
-        textures:   ["stage_pattern"],
-        attributes: [{location: 'a_position', length: 2, stride: 0, offset: 0}],
-        uniforms:   [{location: 'u_tint', method: 'uniform4fv', value: [1, 1, 1, 1]}],
-        matrices:   [{location: 'u_transform', value: identity}, {location: 'u_projection', value: identity}]
-    })
-
-    */
 
     graphics.render({
         camera: {left: 0, right: 800, bottom: 400, top: 0},
@@ -58,7 +46,8 @@ function test2( ) {
         graphics.render(message);
     })
 
-    InputManager.setRoute('keydown', event => {
-        console.log( [...InputManager.keyboard])
+    Operator.add('test', function( ) {
+        gamesystem.sendInput( InputManager.keyboard );
     })
+
 }

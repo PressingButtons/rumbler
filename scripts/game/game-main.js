@@ -6,7 +6,7 @@ let game;
 //==========================================================
 //      Creating Libraries
 //==========================================================
-self.GameLib = { Components: { }, Objects: { }}; //creating namespace 
+self.GameLib = { Components: { }, Objects: { }, Rumblers: { }}; //creating namespace 
 
 //define components 
 importScripts(
@@ -19,6 +19,13 @@ importScripts(
 importScripts(
     './objects/gameobject.js',
     './objects/stageobject.js',
+    './objects/rigidbody.js',
+)
+
+//define rumblers 
+importScripts(
+    './rumblers/rumbler.js',
+    './rumblers/garf.js',
 )
 
 //==========================================================

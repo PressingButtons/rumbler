@@ -9,19 +9,20 @@ Object.assign( Operator, { methods: { } });
 //  Function to add method to runlist
 //==========================================================
 Operator.add = function( key, method ) {
-    this.methods[key] = method;
+    Operator.methods[key] = method;
 }
 //==========================================================
 // Function to remove a method from runlist
 //==========================================================
 Operator.remove = function(key) {
-    delete this.methods[key];
+    delete Operator.methods[key];
 }
 //==========================================================
 // Update - loops through and runs any cached methods
 //==========================================================
 Operator.update = function(timestamp) {
-    for(const method in this.methods) method( timestamp);
+    for(const key in Operator.methods) Operator.methods[key]( timestamp );
+    requestAnimationFrame( Operator.update);
 }
 //==========================================================
 //

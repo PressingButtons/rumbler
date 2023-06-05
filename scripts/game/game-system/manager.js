@@ -37,7 +37,7 @@ Object.assign( GameSystem.Manager, {
     },
 
     update: function(timestamp) {
-        while(this.state_stack.length < 10) this.state_stack.push( this.game.update( ));
+        while(this.state_stack.length < 10) this.state_stack.push( this.game.update(GameSystem.INTERVAL));
         if( timestamp - this.last < GameSystem.INTERVAL) return;  
         this.signal('publish');
         this.last = timestamp;
