@@ -2,43 +2,19 @@
 // GameManager 
 // Static Class that manages GameClasses
 //==========================================================
-GameSystem.Manager = class {
+GameSystem = (function( ) {
 
-    constructor(config ) {
-        super( );
-        this.#init( config )
-    }
+    let game;
 
-    #init(config) {
-        this.camera = new GameLib.Components.Camera( );
-        this.stage = new GameLib.Objects.StageObject(config.stage);
-    }
+    return {
 
-    #openRoutes( ) {
-        messenger.setRoute('play', this.#onplay.bind(this)); 
-        messenger.setRoute('stop', this.#onstop.bind(this)); 
-    }
-
-    #onplay( message ) {
-
-    }
-
-    #onstop( message ) {
-
-    }
-
-    createGameState( ) {
-        return {
-            camera: this.camera.rect( )
+        createGame: function( config ) {
+            if(game) game.closeRoutes( );
+            game = new GameSystem.GameInstance(config);
+            let state = game.currentState( );  
+            return state;
         }
-    }
-
-    closeRoutes( ) {
 
     }
 
-    update( interval ) {
-        
-    }
-
-}
+})( );

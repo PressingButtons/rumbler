@@ -1,24 +1,25 @@
-GameLib.GameObject = class extends Signaler {
+GameLib.Objects.GameObject = class extends Signaler {
 
     constructor(width, height) {
         super( );
-        this.velocity = new GameComponents.Math.Vector( );
-        this.position = new GameComponents.Math.Vector( );
-        this.rotation = new GameComponents.Math.Vector( );
+        this.velocity = {x: 0, y: 0, z: 0};
+        this.position = {x: 0, y: 0, z: 0};
+        this.rotation = {x: 0, y: 0, z: 0}
         this.width = Math.max(width, 1);
         this.height = Math.max(height, 1);
+        this.tint = [1, 1, 1, 1];
         this.textures = [ ];
     }
 
-    reduce( ) {
+    pack( ) {
         return {
-            shader_type: 'texture',
+            shader_type: 'single_texture',
             textures: this.textures,
-            velocity: this.velocity.xyz,
-            position: this.position.xyz,
-            rotation: this.rotation.xyz,
-            width: this.width,
-            height: this.height
+            velocity: Object.values(this.velocity),
+            position: Object.values(this.position),
+            rotation: Object.values(this.rotation),
+            tint: this.tint,
+            width: this.width, height: this.height
         }
     }
 

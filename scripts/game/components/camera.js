@@ -1,11 +1,13 @@
 GameLib.Components.Camera = class {
 
-    #width = 816;
-    #height = 459;
+    #width = 800;
+    #height = 450
 
     constructor( ) {
         this.scale = 1;
-        this.position = { x: 408, y: 230 }; //start at origin
+        this.position = { x: this.width * 0.5, y: this.height * 0.5 }; //start at origin
+        this.scale = 0.5;
+        this.bottom = 580;
     }
 
     get width( ) {

@@ -43,7 +43,6 @@ importScripts('./glmatrix-min.js', './quickGL/quickGL.js');
         }
 
         #setTransformMatrix( detail ) {
-            console.log(detail.width, detail.height)
             let matrix = glMatrix.mat4.fromTranslation(this.#matrix_transform, detail.position);
             glMatrix.mat4.rotateX( matrix, matrix, detail.rotation[0] );
             glMatrix.mat4.rotateY( matrix, matrix, detail.rotation[1] );
@@ -88,7 +87,6 @@ importScripts('./glmatrix-min.js', './quickGL/quickGL.js');
             this.#quickGL.setMatrix('u_projection', this.#matrix_projection);
             this.#setTextures( detail.textures );
             this.#quickGL.draw(0, 4);
-            console.log('drawn');
         }
 
 

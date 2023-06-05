@@ -14,7 +14,8 @@ function loadImageBitmap( url ) {
 
 function loadBitmaps( ) {
     return Promise.all([
-        loadImageBitmap('../images/stage_pattern.webp')
+        loadImageBitmap('../images/stage_pattern.webp'),
+        loadImageBitmap('../images/stage_summit.webp'),
     ])
 }
 

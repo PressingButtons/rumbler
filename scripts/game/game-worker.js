@@ -3,7 +3,12 @@ import WorkerModule from "../system/objects/worker_module.js";
 export default class GameWorker extends WorkerModule {
 
     constructor( ) {
-        super('/scripts/game/game-worker.js');
+        super('/scripts/game/game-main.js');
+    }
+
+    async createGame( graphics ) {
+        let test = await this.sendMessageAsync('create-game', { });
+        graphics.render(test.content);
     }
 
 }

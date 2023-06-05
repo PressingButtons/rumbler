@@ -2,7 +2,7 @@
 // Signaler class 
 // Global class - used to bind actions to certain signals
 //==========================================================
-self.Signlar = class {
+self.Signaler = class {
 
     #routes = { };
 

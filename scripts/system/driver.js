@@ -1,7 +1,8 @@
 import Graphics from "../graphics/graphics.js";
+import GameWorker from "../game/game-worker.js";
 import preload from "./preload.js";
 
-let graphics;
+let graphics, gamesystem;
 
 async function setupGraphics(bitmaps) {
     graphics = new Graphics( );
@@ -12,9 +13,8 @@ async function setupGraphics(bitmaps) {
 export async function init( ) {
     const cache = await preload( );
     await setupGraphics(cache.bitmaps);
-    console.log('[System] - Textures Preloaded');
-    //graphics.clear('#003');
-    test( );
+    gamesystem = new GameWorker( );
+    test2( );
 }
 
 function test( ) {
@@ -47,4 +47,8 @@ function test( ) {
         width: 800, height: 464,
         tint:     [1, 1, 1, 1]}],
     })
+}
+
+function test2( ) {
+    gamesystem.createGame( graphics );
 }
