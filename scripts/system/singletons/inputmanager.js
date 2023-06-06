@@ -26,7 +26,7 @@ const InputManager = new SignalObject
 //==========================================================
 //  Create Player1 and Player2 Inputs
 //==========================================================
-Object.assign( InputManager, { p1: Object.create( scheme_template ), p2: Object.create( scheme_template )});
+Object.assign( InputManager, { p1: Object.assign({ }, scheme_template), p2: Object.assign( { }, scheme_template )});
 //==========================================================
 //  Creating a set to hold on active keys pressed
 //==========================================================
@@ -85,6 +85,7 @@ InputManager.setScheme = function( p_id, source, buttons) {
     for(const button_name in InputManager[p_id].buttons) {
         if( buttons[button_name] ) InputManager[p_id].buttons[button_name].key = buttons[button_name];
     }
+    console.log(InputManager[p_id])
 }
 //==========================================================
 //

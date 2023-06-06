@@ -43,28 +43,18 @@ GameSystem.GameInstance = class extends Signaler {
 
     #oninput( message ) {
         const speed = 0.8;
-        if(message.has('a') && !message.has('d')) this.camera.position.x -= speed;
-        if(message.has('d') && !message.has('a')) this.camera.position.x += speed;
-        if(message.has('w') && !message.has('s')) this.camera.position.y -= speed;
-        if(message.has('s') && !message.has('w')) this.camera.position.y += speed;
-
-        if(message.has('arrowleft') && !message.has('arrowright')) {
+        const buttons = message.p1.buttons;
+        if( buttons.left.active && !buttons.right.active ) {
             this.player1.velocity.x = -30;
             this.player1.rotation.y = Math.PI;
         }
-        if(!message.has('arrowleft') && message.has('arrowright')) {
+        if( !buttons.left.active && buttons.right.active) {
             this.player1.rotation.y = 0;
             this.player1.velocity.x =  30;
         }
 
-        if(message.has('arrowup')) this.player1.jump(GameSystem.GameInstance.GRAVITY)
+        if(buttons.up.active) this.player1.jump(GameSystem.GameInstance.GRAVITY)
 
-        if(message.has('q')) this.camera.scale -= 0.01;
-        if(message.has('e')) this.camera.scale += 0.01;
-
-        if(this.camera.scale < 0.3) this.camera.scale = 0.3;
-        if(this.camera.scale > 1) this.camera.scale = 1;
-        
         if(this.camera.right >= 816) this.camera.right = 816;
         if(this.camera.left <= 0)    this.camera.left  = 0;
         if(this.camera.bottom >= 600) this.camera.bottom = 600;

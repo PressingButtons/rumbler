@@ -41,13 +41,20 @@ function test( ) {
 }
 
 function test2( ) {
+
+    InputManager.setScheme('p1', 'keyboard', {
+        menu: 'enter',
+        left: 'a', right: 'd', up: 'w', down: 's',
+        A: 'y', B: 'u', C: 'h', D: 'j', confirm: 'enter', cancel: 'backspace' 
+    })
+
     gamesystem.createGame( );
     gamesystem.setRoute('state', message => {
         graphics.render(message);
     })
 
     Operator.add('test', function( ) {
-        gamesystem.sendInput( InputManager.keyboard );
+        gamesystem.sendInput({ p1: InputManager.p1, p2: InputManager.p2 });
     })
 
 }
