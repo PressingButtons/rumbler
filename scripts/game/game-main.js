@@ -12,7 +12,8 @@ self.GameLib = { Components: { }, Objects: { }, Rumblers: { }}; //creating names
 importScripts(
     './components/math.js',
     './components/camera.js',
-    './components/spawner.js'
+    './components/spawner.js',
+    './components/animator.js'
 )
 
 //define objects 
