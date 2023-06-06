@@ -1,13 +1,11 @@
 GameLib.Components.Camera = class {
 
     #width = 800;
-    #height = 450
+    #height = 450;
 
-    constructor( ) {
+    constructor(stage_width, stage_height) {
         this.scale = 1;
-        this.position = { x: this.width * 0.5, y: this.height * 0.5 }; //start at origin
-        this.scale = 0.5;
-        this.bottom = 580;
+        this.position = { x: stage_width / 2, y: stage_height / 2 }; //start at origin
     }
 
     get width( ) {
@@ -52,6 +50,10 @@ GameLib.Components.Camera = class {
 
     get rect( ) {
         return {left: this.left, right: this.right, top: this.top, bottom: this.bottom}
+    }
+
+    move( x, y ) {
+        this.position = {x: x, y: y}
     }
 
 }

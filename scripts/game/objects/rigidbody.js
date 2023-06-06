@@ -7,11 +7,35 @@ GameLib.Objects.RigidBody = class extends GameLib.Objects.GameObject {
     }
 
     get bottom( ) {
-       return this.position.y + this.body.height - this.body.y;
+       return (this.position.y - this.height * 0.5) + this.body.y + this.body.height;
     }
 
     set bottom(n) {
-       // this.position.y = n - this.body.y - this.body.height;
+        this.position.y = ( n + this.height * 0.5 ) - this.body.y - this.body.height; 
+    }
+
+    get top( ) {
+        return (this.position.y - this.height * 0.5) + this.body.y;
+    }
+
+    set top(n) {
+        this.position.y = n + this.height * 0.5 - this.body.y;
+    }
+
+    get left( ) {
+        return (this.position.x - this.width * 0.5) + this.body.x; 
+    }
+
+    set left(n) {
+        this.position.x = n + this.width * 0.5 - this.body.x;
+    }
+
+    get right( ) {
+        return (this.position.x - this.width * 0.5) + this.body.x + this.body.width; 
+    }
+
+    set right(n) {
+        this.position.x = (n + this.width * 0.5) - this.body.x - this.body.width;
     }
 
     #init( ) {
@@ -20,27 +44,32 @@ GameLib.Objects.RigidBody = class extends GameLib.Objects.GameObject {
         this.setRoute( 'update', this.#onupdate.bind(this));
     }
 
+    #friction( ) {
+        if( this.velocity.x != 0 )  this.velocity.x *= 0.8;
+        if( Math.abs(this.velocity.x) < 0.2 ) this.velocity.x = 0;
+    }
+
     #aerialRoute( config ) {
         this.velocity.y += config.gravity * config.seconds;
-        console.log('falling');
+        this.land = false;
     }
 
     #groundRoute( config ) {
-        this.velocity.y = 0;
+        if(this.velocity.y > 0) this.velocity.y = 0;
         this.bottom = config.ground_level;
-        if( this.velocity.x != 0 ) this.velocity.x *= 0.8;
-        if( this.velocity.x < 0.2 ) this.velocity.x = 0; 
+        this.#friction( ); 
+        this.land = true;
     }
 
     #onupdate( config ) {
-        this.move(config.seconds);
         if( this.bottom >= config.ground_level ) this.signal('ground', config);
         else this.signal('aerial', config); 
+        this.move(config.seconds);
     }
 
     move( seconds ) {
-        this.position.x += this.velocity.x * seconds;
-        this.position.y += this.velocity.y * seconds;
+       this.position.x += this.velocity.x * seconds;
+       this.position.y += this.velocity.y * seconds;
     } 
 
 }

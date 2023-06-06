@@ -1,11 +1,13 @@
 GameSystem.GameInstance = class extends Signaler {
 
     static GROUND_LEVEL = 527;
-    static GRAVITY = 100;
+    static GRAVITY = 300;
 
     constructor(config) {
         super( );
-        this.camera     = new GameLib.Components.Camera( );
+        this.camera     = new GameLib.Components.Camera(816, 600);
+        this.camera.scale = 0.6;
+        this.camera.bottom = 600;
         this.stage      = new GameLib.Objects.StageObject('stage_summit');
         this.objects    = [ ];
         this.player1;
@@ -19,10 +21,12 @@ GameSystem.GameInstance = class extends Signaler {
     }
 
     #initPlayers( config ) {
-        this.player1 = new GameLib.Rumblers.Garf(350, 400);
+        this.player1 = new GameLib.Rumblers.Garf(358, 527);
+        this.player1.right = 378;
         // =======================================================
-        this.player2 = new GameLib.Rumblers.Garf(450, 400);
+        this.player2 = new GameLib.Rumblers.Garf(458, 527);
         this.player2.rotation.y = Math.PI;
+        this.player2.left = 438;
         // =======================================================
         this.objects.push(this.player1, this.player2);
     }
@@ -44,8 +48,16 @@ GameSystem.GameInstance = class extends Signaler {
         if(message.has('w') && !message.has('s')) this.camera.position.y -= speed;
         if(message.has('s') && !message.has('w')) this.camera.position.y += speed;
 
-        if(message.has('arrowleft') && !message.has('arrowright')) this.player1.velocity.x = -30;
-        if(!message.has('arrowleft') && message.has('arrowright')) this.player1.velocity.x =  30;
+        if(message.has('arrowleft') && !message.has('arrowright')) {
+            this.player1.velocity.x = -30;
+            this.player1.rotation.y = Math.PI;
+        }
+        if(!message.has('arrowleft') && message.has('arrowright')) {
+            this.player1.rotation.y = 0;
+            this.player1.velocity.x =  30;
+        }
+
+        if(message.has('arrowup')) this.player1.jump(GameSystem.GameInstance.GRAVITY)
 
         if(message.has('q')) this.camera.scale -= 0.01;
         if(message.has('e')) this.camera.scale += 0.01;
