@@ -44,9 +44,15 @@ GameLib.Objects.RigidBody = class extends GameLib.Objects.GameObject {
         this.setRoute( 'update', this.#onupdate.bind(this));
     }
 
-    #collideBody( rb ) {
+    #collideBody( rb, seconds ) {
         if( rb == this ) return;
-        if(Collision.Rect2Rect(this, rb)) console.log('collision');
+        const velocity = { x: this.velocity.x * seconds, y: this.velocity.y * seconds }
+        const collision = Collision.RigidBody2RigidBody(this, velocity, rb);
+        if(!collision) return;
+        console.log('contact', collision.normal, collision.t)
+        this.velocity.x = collision.normal[0] * Math.abs( velocity.x ) * 1 + collision.t;
+        this.move( seconds );
+        //this.velocity.y = collision.normal.y * Math.abs( velocity.y ) * 1 - collision.t;
     }
 
     #friction( ) {
@@ -75,7 +81,7 @@ GameLib.Objects.RigidBody = class extends GameLib.Objects.GameObject {
 
     #resolveObjects(config) {
         for(const object of config.objects) {
-            this.#collideBody( object );
+            this.#collideBody( object, config.seconds );
         }
     }
 
