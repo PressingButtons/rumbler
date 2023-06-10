@@ -44,6 +44,11 @@ GameLib.Objects.RigidBody = class extends GameLib.Objects.GameObject {
         this.setRoute( 'update', this.#onupdate.bind(this));
     }
 
+    #collideBody( rb ) {
+        if( rb == this ) return;
+        if(Collision.Rect2Rect(this, rb)) console.log('collision');
+    }
+
     #friction( ) {
         if( this.velocity.x != 0 )  this.velocity.x *= 0.5;
         if( Math.abs(this.velocity.x) < 0.2 ) this.velocity.x = 0;
@@ -65,6 +70,13 @@ GameLib.Objects.RigidBody = class extends GameLib.Objects.GameObject {
         this.move(config.seconds);
         if( this.bottom >= config.ground_level ) this.signal('ground', config);
         else this.signal('aerial', config); 
+        this.#resolveObjects(config);
+    }
+
+    #resolveObjects(config) {
+        for(const object of config.objects) {
+            this.#collideBody( object );
+        }
     }
 
     move( seconds ) {

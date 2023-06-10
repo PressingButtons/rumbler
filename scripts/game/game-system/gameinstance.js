@@ -37,7 +37,9 @@ GameSystem.GameInstance = class extends Signaler {
             seconds: interval * 0.001,
             objects: this.objects, 
             ground_level: GameSystem.GameInstance.GROUND_LEVEL, 
-            gravity: GameSystem.GameInstance.GRAVITY
+            gravity: GameSystem.GameInstance.GRAVITY,
+            p1: this.player1,
+            p2: this.player2
         }
     }
 

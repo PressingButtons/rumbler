@@ -2,7 +2,7 @@ importScripts('../system/singletons/worker_messenger.js', './signaler.js');
 //==========================================================
 //  Defining Global Libraries
 //==========================================================
-importScripts('./global/calc.js')
+importScripts('./global/calc.js', './global/collision.js');
 //==========================================================
 //  Global Variable Definitions
 //==========================================================
