@@ -1,11 +1,22 @@
 GameLib.Rumblers.Rumbler = class extends GameLib.Objects.RigidBody {
 
+    static JUMP_HEIGHT = 60;
+
+    #stats = {
+        health: 10000,
+        speed: {
+            walk_forward: 50,
+            walk_backward: 30,
+            jump_forward: 90,
+            jump_backward: 50
+        }
+    }
+
     constructor(width, height, body) {
         super(width, height, body);
-        this.walk_forward_speed = 100;
-        this.walk_backward_speed = 80;
-        this.jumpHeight = 70;
+        this.stats = this.setStats( );
         this.flags = { nuetral: true, crouch: false }
+        this.input = { left: false, right: false, up: false, down: false, A: false, B: false, C: false, d: false}
         this.animator = new GameLib.Components.Animator( this )
         this.#init( );
     }
@@ -15,7 +26,19 @@ GameLib.Rumblers.Rumbler = class extends GameLib.Objects.RigidBody {
         //this.setRoute('aerial', this.#onaerialinput.bind(this));
         //this.setRoute('grounded-forward', this.#onGroundedForward.bind(this));
         //this.setRoute('grounded-backward', this.#onGroundedBackward.bind(this));
+        this.setRoute('update', this.#update.bind(this));
     }    
+    //=====================================
+    // Setting Stat
+    //=====================================
+    #setStat( source, value ) {
+        console.log(source, value);
+        if(!value) return;
+        if( value instanceof Object) 
+            for(const key in source) 
+                this.#setStat( source[key], Object[key]);
+        else source = value;
+    }
     //=====================================
     // Grounded Input Route Bindings 
     //=====================================
@@ -44,18 +67,16 @@ GameLib.Rumblers.Rumbler = class extends GameLib.Objects.RigidBody {
     //  Grounded Forward Actions
     //=====================================
     #onGroundedForward( options ) {
-        if(options.rightward) this.#walk('walk_forward', this.walk_forward_speed, 0, options.interval);
-        else this.#walk('walk_backward', -this.walk_backward_speed, Math.PI, options.interval);
+        if(options.rightward) this.#walk('walk_forward', this.#stats.walk_forward , 0, options.interval);
+        else this.#walk('walk_backward', -this.#stats.walk_backward, Math.PI, options.interval);
     }
     //=====================================
     //  Grounded Backward Actions
     //=====================================
     #onGroundedBackward( options ) {
-        if(options.rightward) this.#walk('walk_backward', this.walk_forward_speed, Math.PI, options.interval);
-        else this.#walk('walk_forward', -this.walk_backward_speed, 0, options.interval);
+        if(options.rightward) this.#walk('walk_backward', this.#stats.walk_backward, Math.PI, options.interval);
+        else this.#walk('walk_forward', -this.#stats.walk_forward, 0, options.interval);
     }
-    //=====================================
-    //=====================================
     //=====================================
     //  Walking Backward
     //=====================================
@@ -65,14 +86,36 @@ GameLib.Rumblers.Rumbler = class extends GameLib.Objects.RigidBody {
         this.velocity.x = speed;
     }
     //=====================================
-    //  
+    //  Update Route function 
+    //=====================================
+    #update( config ) {
+        if( this.land ) {
+            if( this.input.right ) this.velocity.x = this.#stats.speed.walk_forward;
+            if( this.input.left)   this.velocity.x = -this.#stats.speed.walk_backward;
+            if( this.input.up) {
+                this.velocity.x = 0;
+                this.jump( config.gravity );
+                if( this.input.right ) this.velocity.x = this.#stats.speed.jump_forward;
+                if( this.input.left  ) this.velocity.x = -this.#stats.speed.jump_backward;
+            }
+        }
+    }
+    //=====================================
+    //  Public functions                    ==============================================================================
     //=====================================
     jump( gravity ) {
         if(!this.land) return;
-        this.velocity.y = -Math.pow((2 * gravity) * this.jumpHeight, 0.5); //square root -2 times acceleration times distance
+        this.velocity.y = -Math.pow((2 * gravity) * GameLib.Rumblers.Rumbler.JUMP_HEIGHT, 0.5); //square root -2 times acceleration times distance
     }
     //=====================================
+    //setStats - allows quick assignment of player stats
     //=====================================
+    setStats(object = { })  {
+        if(!object) return;
+        for( const key in this.#stats ) {
+            if( object[key] ) this.#setStat( object[key], object[key]);
+        }
+    }
     //=====================================
     //=====================================
     //=====================================

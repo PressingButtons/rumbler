@@ -45,7 +45,7 @@ GameLib.Objects.RigidBody = class extends GameLib.Objects.GameObject {
     }
 
     #friction( ) {
-        if( this.velocity.x != 0 )  this.velocity.x *= 0.8;
+        if( this.velocity.x != 0 )  this.velocity.x *= 0.5;
         if( Math.abs(this.velocity.x) < 0.2 ) this.velocity.x = 0;
     }
 
@@ -62,9 +62,9 @@ GameLib.Objects.RigidBody = class extends GameLib.Objects.GameObject {
     }
 
     #onupdate( config ) {
+        this.move(config.seconds);
         if( this.bottom >= config.ground_level ) this.signal('ground', config);
         else this.signal('aerial', config); 
-        this.move(config.seconds);
     }
 
     move( seconds ) {

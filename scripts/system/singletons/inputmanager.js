@@ -22,7 +22,7 @@ const scheme_template = {
 //==========================================================
 //  Create Input Manager Object - Signaler
 //==========================================================
-const InputManager = new SignalObject
+const InputManager = new SignalObject( )
 //==========================================================
 //  Create Player1 and Player2 Inputs
 //==========================================================

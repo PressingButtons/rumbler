@@ -1,12 +1,12 @@
 GameSystem.GameInstance = class extends Signaler {
 
     static GROUND_LEVEL = 527;
-    static GRAVITY = 300;
+    static GRAVITY = 500;
 
     constructor(config) {
         super( );
         this.camera     = new GameLib.Components.Camera(816, 600);
-        this.camera.scale = 0.6;
+        this.camera.scale = 0.4;
         this.camera.bottom = 600;
         this.stage      = new GameLib.Objects.StageObject('stage_summit');
         this.objects    = [ ];
@@ -42,23 +42,37 @@ GameSystem.GameInstance = class extends Signaler {
     }
 
     #oninput( message ) {
-        const speed = 0.8;
         const buttons = message.p1.buttons;
-        if( buttons.left.active && !buttons.right.active ) {
-            this.player1.velocity.x = -30;
-            this.player1.rotation.y = Math.PI;
-        }
-        if( !buttons.left.active && buttons.right.active) {
-            this.player1.rotation.y = 0;
-            this.player1.velocity.x =  30;
-        }
+        this.player1.input.left =   ( buttons.left.active && !buttons.right.active );
+        this.player1.input.right =  (!buttons.left.active && buttons.right.active );
+        this.player1.input.up =     ( buttons.up.active );
+        this.player1.input.down =   ( buttons.down.active )
+    }
 
-        if(buttons.up.active) this.player1.jump(GameSystem.GameInstance.GRAVITY)
+    #repositionCamera( ) {
+        const midpoint = Calc.Midpoint( this.player1.position, this.player2.position );
+        Object.assign( this.camera.position, midpoint );
+        this.#resolveCameraBounds(0, 0, 816, 600);
+        
+    }
 
-        if(this.camera.right >= 816) this.camera.right = 816;
-        if(this.camera.left <= 0)    this.camera.left  = 0;
-        if(this.camera.bottom >= 600) this.camera.bottom = 600;
-        if(this.camera.top < 0 ) this.camera.top = 0;
+    #resolveCameraBounds( left, top, right, bottom ) {
+        if(this.camera.top < top)        this.camera.top = top;
+        if(this.camera.left <= left)     this.camera.left  = left;
+        if(this.camera.right >= right)   this.camera.right = right;
+        if(this.camera.bottom >= bottom) this.camera.bottom = bottom;
+    }
+
+    #resolveCameraScale( ) {
+        const distance = Calc.Distance( this.player1.position, this.player2.position );
+        let scale = Math.min( 1, distance / 500 );
+        scale = Math.max( 0.4, scale);
+        this.camera.scale = scale;
+    }
+
+    #resolveCamera( ) {
+        this.#resolveCameraScale( );
+        this.#repositionCamera( );
     }
 
     currentState( ) {
@@ -75,6 +89,7 @@ GameSystem.GameInstance = class extends Signaler {
     update( interval ) {
         const detail = this.#createUpdateDetail(interval);
         for(const object of this.objects) object.signal('update', detail);
+        this.#resolveCamera( );
         return this.currentState( );
     }
     
