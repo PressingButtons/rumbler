@@ -9,6 +9,13 @@ GameLib.Objects.GameObject = class extends Signaler {
         this.height = Math.max(height, 1);
         this.tint = [1, 1, 1, 1];
         this.textures = [ ];
+        this.setRoute('move', this.#movement.bind(this));
+    }
+
+    #movement( config ) {
+        const seconds = config.seconds;
+        this.position.x += this.velocity.x * seconds;
+        this.position.y += this.velocity.y * seconds;
     }
 
     pack( ) {
