@@ -20,7 +20,6 @@ Collision.Rect2Rect = ( r1, r2 ) => {
        const near = NearIntersection( origin, vector, rect); 
        const far  = FarIntersection( origin, vector, rect);
        setPointOrder(near, far);
-       //console.log('near,far', near, far)
        if( near.x > far.y || near.y > far.x ) return null;
        let tNear = Math.max( near.x, near.y );
        if( tNear > 1 ) return null;
@@ -72,18 +71,18 @@ Collision.Rect2Rect = ( r1, r2 ) => {
 //  Rigid Body to Rigid Body 
 //==========================================================
 {
-    Collision.RigidBody2RigidBody = ( rb1, vector, rb2 ) => {
-        if( rb1.velocity.x == 0 && rb1.velocity.y == 0) return null;
-        const rect = expandRect( rb1, rb2 );
-        return Collision.Ray2Rect( rb1.position, vector, rect );
+    Collision.DynamicRect = ( r1, vector, r2 ) => {
+        if( vector.x == 0 && vector.y == 0 ) return null;
+        const rect = expandRect( r1, r2 );
+        return Collision.Ray2Rect( r1.position, vector, rect );
     }
 
     const expandRect = ( rb1, rb2) => {
         return {
-            top: rb2.top - rb1.body.height * 0.5,
-            left: rb2.left - rb1.body.width * 0.5,
-            right: rb2.right + rb1.body.width * 0.5,
-            bottom: rb2.bottom + rb1.body.height * 0.5
+            top: rb2.top - rb1.height * 0.5,
+            left: rb2.left - rb1.width * 0.5,
+            right: rb2.right + rb1.width * 0.5,
+            bottom: rb2.bottom + rb1.height * 0.5
         }
     }
 }

@@ -38,6 +38,18 @@ GameLib.Objects.RigidBody = class extends GameLib.Objects.GameObject {
         this.position.x = (n + this.width * 0.5) - this.body.x - this.body.width;
     }
 
+    get rect( ) {
+        return {
+            position: this.position,
+            left: this.left,
+            right: this.right,
+            top: this.top, 
+            bottom: this.bottom,
+            width: this.body.width,
+            height: this.body.height    
+        }
+    }
+
     #init( ) {
         this.setRoute( 'aerial', this.#aerialRoute.bind(this))
         this.setRoute( 'ground', this.#groundRoute.bind(this));
@@ -47,12 +59,7 @@ GameLib.Objects.RigidBody = class extends GameLib.Objects.GameObject {
     #collideBody( rb, seconds ) {
         if( rb == this ) return;
         const velocity = { x: this.velocity.x * seconds, y: this.velocity.y * seconds }
-        const collision = Collision.RigidBody2RigidBody(this, velocity, rb);
-        if(!collision) return;
-        console.log('contact', collision.normal, collision.t)
-        this.velocity.x = collision.normal[0] * Math.abs( velocity.x ) * 1 + collision.t;
-        this.move( seconds );
-        //this.velocity.y = collision.normal.y * Math.abs( velocity.y ) * 1 - collision.t;
+        this.#resolveCollision( Collision.DynamicRect( this.rect, velocity, rb.rect ), rb, velocity);
     }
 
     #friction( ) {
@@ -68,15 +75,35 @@ GameLib.Objects.RigidBody = class extends GameLib.Objects.GameObject {
     #groundRoute( config ) {
         if(this.velocity.y > 0) this.velocity.y = 0;
         this.bottom = config.ground_level;
-        this.#friction( ); 
         this.land = true;
     }
 
     #onupdate( config ) {
-        this.move(config.seconds);
         if( this.bottom >= config.ground_level ) this.signal('ground', config);
         else this.signal('aerial', config); 
         this.#resolveObjects(config);
+        this.move(config.seconds);
+    }
+
+    #resolveCollision(collision, rb, velocity) {
+        if(!collision) return;
+        this.#resolveCollisionX( collision, rb );
+        /*
+        const v1 = this.velocity.x;
+        const v2 = rb.velocity.x;
+        this.velocity.x += collision.normal[0] * Math.abs( v1 * 0.5 ) + v2;
+        rb.velocity.x   -= collision.normal[0] * Math.abs( v1 * 0.5 ) + v2; 
+        */
+    }
+
+    #resolveCollisionX( collision, rb ) {
+       if( this.position.x < rb.position.x ) {
+            this.right = collision.contact.x + this.body.width * 0.5;
+            rb.left    = this.right + 1;
+       } else {
+            this.left = collision.contact.x - this.body.width * 0.5;
+            rb.right  = this.left - 1;
+       }
     }
 
     #resolveObjects(config) {
@@ -88,6 +115,7 @@ GameLib.Objects.RigidBody = class extends GameLib.Objects.GameObject {
     move( seconds ) {
        this.position.x += this.velocity.x * seconds;
        this.position.y += this.velocity.y * seconds;
+       if( this.land ) this.#friction( );
     } 
 
 }
