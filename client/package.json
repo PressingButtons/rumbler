@@ -1,0 +1,19 @@
+{
+  "name": "rumbler_server",
+  "version": "1.0.0",
+  "description": "server component for rumbler game",
+  "main": "input.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PressingButtons/rumbler.git"
+  },
+  "author": "Steven Boyd",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PressingButtons/rumbler/issues"
+  },
+  "homepage": "https://github.com/PressingButtons/rumbler#readme"
+}

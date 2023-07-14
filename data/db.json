@@ -1,8 +1,0 @@
-{
-    "difficulty": 5,
-    "match_settings":  { "wins": 2, "round_time": 45},
-    "profiles": { },
-    "records" : { },
-    "resolutions": [[800, 450],[1024, 576],[1280, 720],[2048, 1536]],
-    "resolution": 0
-}
