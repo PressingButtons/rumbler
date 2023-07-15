@@ -80,6 +80,6 @@
     "textures": {
         "palette": "palette.webp",
         "summit": "stage_summit.webp",
-        "garf"  : "garf.webp"
+        "garf"  : "garf-palette.webp"
     }
 }

@@ -32,7 +32,7 @@ const setProjection = (matrix, rect) => {
 const setTexture = ( shader, texture, index ) => {
     gl.activeTexture( gl.TEXTURE0 + index);
     gl.bindTexture( gl.TEXTURE_2D, texture );
-    gl.uniform1i( shader.uniforms['u_texture_0'], index );
+    gl.uniform1i( shader.uniforms[`u_texture_${index}`], index );
 }
 
 const setTransform = ( matrix, object ) => {
@@ -43,6 +43,11 @@ const setTransform = ( matrix, object ) => {
     mat4.rotateZ( matrix, matrix, object.rotation[2] );
     mat4.translate( matrix, matrix, [ object.half_w, object.half_h, 0 ]);
     mat4.scale( matrix, matrix, [object.width, object.height, 1]); 
+}
+
+const setTextureMatrix = (matrix, object, source) => {
+    const w = object.width / source.size[0];
+    mat4.fromRotationTranslationScale( matrix, [0, 0, 0, 0], [object.cell * w, 0, 0], [ w, 1, 1]);
 }
 
 const setUniform = ( shader, uniform_method, uniform_name, ...value ) => {
@@ -85,7 +90,17 @@ const createTexture = bitmap => {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     }
-    return texture;
+    return { texture: texture, size: [bitmap.width, bitmap.height] };
+}
+
+const setPalette =  data => {
+    data = new Uint8Array(data);
+    gl.bindTexture  (gl.TEXTURE_2D, textures.palette_group);
+    gl.texImage2D   (gl.TEXTURE_2D, 0, gl.LUMINANCE, data.length, 1, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 }
 
 const powerOf2 = n => {
@@ -116,21 +131,52 @@ const render = object => {
     if( !shader ) throw `Invalid shader [${object.shader}] `;
     switch( object.shader ) {
         case 'single_texture': renderSingleTexture( shader, object ); break;
+        case 'rumbler': renderRumbler( shader, object ); break;
     }
     return shader;
 }
 
 
 const renderSingleTexture = (shader, object) => {
-    setTexture( shader, textures[object.textures[0]], 0);
+    const source = textures[object.textures[0]];
+    setTexture( shader, source.texture, 0);
+    // ==========================================
     setBuffer( 'position');
     setAttribute( shader, 'a_position', 2, 0, 0);
-    setBuffer( 'texture' );
-    setAttribute( shader, 'a_texture_coord', 2, 0, 0);
+    // ==========================================
     gl.uniformMatrix4fv(shader.uniforms.u_projection, false, m0);
+    // ==========================================
     setTransform( m1, object );
     gl.uniformMatrix4fv(shader.uniforms.u_transform,  false, m1);
+    // ==========================================
     gl.uniform4fv( shader.uniforms.u_tint, object.tint );
+    // ==========================================
     draw(0, 4);
-    if( DEBUG ) debug_report_buffer( );
+}
+
+const renderRumbler = (shader, object) => {
+    const source = textures[object.textures[0]];
+    setTexture( shader, source.texture, 0);
+    // ==========================================
+    setBuffer( 'position');
+    setAttribute( shader, 'a_position', 2, 0, 0);
+    // ==========================================
+    setTexture( shader, textures.palette.texture, 1);
+    gl.uniform2fv( shader.uniforms.u_palette_size, textures.palette.size );
+    // ==========================================
+    setTexture( shader, textures.palette_group.texture, 2);
+    setPalette( object.palette );
+    gl.uniform2iv( shader.uniforms.u_map_size, [object.palette.length, 1]);
+    // ==========================================
+    gl.uniformMatrix4fv(shader.uniforms.u_projection, false, m0);
+    // ==========================================
+    setTransform( m1, object );
+    gl.uniformMatrix4fv(shader.uniforms.u_transform,  false, m1);
+    // ==========================================
+    setTextureMatrix( m2, object, source );
+    gl.uniformMatrix4fv( shader.uniforms.u_texMatrix, false, m2);
+    // ==========================================
+    gl.uniform4fv( shader.uniforms.u_tint, object.tint );
+    // ==========================================
+    draw(0, 4);
 }

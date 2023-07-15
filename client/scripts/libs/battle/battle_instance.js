@@ -104,24 +104,24 @@
     const Camera = {
 
         x: 0,  y: 0, scale: 1,
-        width: 600,
-        height: 480,
+        width: 800,
+        height: 450,
     
         move: function( x, y ) {
             this.x = x; this.y = y;
         },
     
-        get left( ) { return this.x - this.width * 0.5 * this.scale; },
-        set left(n) { this.x = n + this.width * 0.5 * this.scale },
+        get left( ) { return this.x - this.width * 0.5 / this.scale; },
+        set left(n) { this.x = n + this.width * 0.5 / this.scale },
     
-        get right( ) { return this.x + this.width * 0.5 * this.scale; },
-        set right(n) { this.x = n - this.width * 0.5 * this.scale },
+        get right( ) { return this.x + this.width * 0.5 / this.scale; },
+        set right(n) { this.x = n - this.width * 0.5 / this.scale },
     
-        get top( ) { return this.y - this.height * 0.5 * this.scale; },
-        set top(n) { this.y = n + this.height * 0.5 * this.scale },
+        get top( ) { return this.y - this.height * 0.5 / this.scale; },
+        set top(n) { this.y = n + this.height * 0.5 / this.scale },
     
-        get bottom( ) { return this.y + this.height * 0.5 * this.scale; },
-        set bottom(n) { this.y = n - this.height * 0.5 * this.scale },
+        get bottom( ) { return this.y + this.height * 0.5 / this.scale; },
+        set bottom(n) { this.y = n - this.height * 0.5 / this.scale },
 
         get rect( ) {
             return { left: this.left, right: this.right, top: this.top, bottom: this.bottom }

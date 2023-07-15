@@ -25,6 +25,7 @@ self.onmessage = async event => {
             buffers.square   = createBuffer(new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]));
             buffers.position = createBuffer(new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]));
             buffers.texture  = createBuffer(new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]));
+            textures.palette_group = gl.createTexture( );
             sendMessage('init', true);
         break;
         case 'compile': 

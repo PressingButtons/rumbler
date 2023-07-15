@@ -87,6 +87,9 @@ GameLib.GameObject = class extends SignalObject {
         this.half_w = data.width * 0.5;
         this.half_h = data.height * 0.5;
         this.tint = [1, 1, 1, 1];
+        this.width = data.width;
+        this.height = data.height;
+        this.cell = 0;
     }
 
     //getters and setters
@@ -129,11 +132,12 @@ GameLib.GameObject = class extends SignalObject {
         return {
             position: [...this.position],
             rotation: [...this.rotation],
-            height: this.source.height,
-            width: this.#source.width,
             half_w: this.half_w,
             half_h: this.half_h,
-            tint: this.tint
+            height: this.height,
+            width:  this.width,
+            tint:   this.tint,
+            cell:   this.cell
         }
     }
 
@@ -149,12 +153,15 @@ GameLib.Rumbler = class extends GameLib.GameObject {
     #init( data ) {
         this.health_pool = new GameLib.HealthPool( data.health_points );
         this.stamina_pool = new GameLib.StaminaPool( data.stamina_points );
+        this.palette = [0];
+        this.cell = 0;
     }
 
     current_state( ) {
         return Object.assign( super.current_state( ), {
             textures: ['garf'],
-            shader: 'single_texture',
+            shader: 'rumbler',
+            palette: this.palette,
         })
     }
 
