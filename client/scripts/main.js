@@ -34,11 +34,14 @@ window.onload = async event => {
     //==========================================
     // 
     //==========================================
+    /*
     admin.battle_system.create({
         time: 100, mode: 0,
         player1: { width: 96, height: 96, animations: [] },
         player2: { width: 96, height: 96, animations: [] },
     }, updateState);
+    */
+   admin.createGame({mode: 0, time: 10000, player1: { palette: 0, name: 'garf'} , player2: {palette: 1, name: 'garf'}}, updateState);
     //==========================================
     // 
     //==========================================

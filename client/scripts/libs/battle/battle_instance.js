@@ -8,7 +8,7 @@
     //==========================================
     const Stage = {
         textures: ['summit'],
-        position: [0, 0, 0],
+        position: [408, 300, 0],
         rotation: [0, 0, 0],
         tint: [1, 1, 1, 1],
         width: 816, height: 600,
@@ -27,6 +27,7 @@
         static UPDATE_INTERVAL = 10;
         static STAGE_WIDTH = 816;
         static STAGE_HEIGHT = 600;
+        static FLOOR = 527;
         static DEBUG = false;
 
         #interval_id;
@@ -34,9 +35,10 @@
 
         constructor( config ) {
             super( );
-            Camera.scale = 1;
-            Camera.move( BattleInstance.STAGE_WIDTH / 2, BattleInstance.STAGE_HEIGHT - Camera.height / 2);
+            Camera.scale = 2;
+            Camera.move( BattleInstance.STAGE_WIDTH / 2, BattleInstance.STAGE_HEIGHT - Camera._height / 2);
             this.#init( config );
+            this.#setRoutes( );
             this.#play( );
         }
 
@@ -53,9 +55,14 @@
         }
 
         #initPlayers( config ) {
+            console.log( config );
             this.player1 = createPlayer( config.player1 );
-            this.player1.move( 400, 400 );
+            this.player1.x = BattleInstance.STAGE_WIDTH / 2 - 50;
+            this.player1.bottom = BattleInstance.FLOOR;
             this.player2 = createPlayer( config.player2 );
+            this.player2.x = BattleInstance.STAGE_WIDTH / 2 + 50;
+            this.player2.bottom = BattleInstance.FLOOR;
+            this.player2.face_left( );
         }
 
         
@@ -68,6 +75,7 @@
         #setRoutes( ) {
             messenger.listen('play', this.#play.bind( this ));
             messenger.listen('stop', this.#stop.bind( this ));
+            messenger.listen('input', this.#oninput.bind(this));
         }
 
         #play( ) {
@@ -76,6 +84,10 @@
 
         #stop( ) {
             clearInterval(this.#interval_id);
+        }
+
+        #oninput( input ) {
+            console.log( input );
         }
 
         #sendState( ) {
@@ -109,6 +121,14 @@
     
         move: function( x, y ) {
             this.x = x; this.y = y;
+        },
+        
+        get _height( ) {
+            return this.height / this.scale;
+        },
+
+        get _width( ) {
+            return this.width / this.scale;
         },
     
         get left( ) { return this.x - this.width * 0.5 / this.scale; },
@@ -145,6 +165,7 @@
     // Creating a Player Object
     //==========================================
     const createPlayer = config => {
+        console.log( config );
         const player = new GameLib.Rumbler( config );
         return player;
     }

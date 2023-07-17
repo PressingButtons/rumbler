@@ -119,6 +119,14 @@ GameLib.GameObject = class extends SignalObject {
         this.#animator.animate( name );
     }
 
+    face_right( ) {
+        this.rotation[1] = 0;
+    }
+
+    face_left( ) {
+        this.rotation[1] = Math.PI;
+    }
+
     move( x, y ) {
         this.x = x; this.y = y;
     }
@@ -145,21 +153,40 @@ GameLib.GameObject = class extends SignalObject {
 
 GameLib.Rumbler = class extends GameLib.GameObject {
 
-    constructor( data ) {
-        super( data );
-        this.#init( data );
+    constructor( config ) {
+        super( config.data );
+        this.#init( config );
     }
 
-    #init( data ) {
-        this.health_pool = new GameLib.HealthPool( data.health_points );
-        this.stamina_pool = new GameLib.StaminaPool( data.stamina_points );
-        this.palette = [0];
+    #init( config ) {
+        this.health_pool = new GameLib.HealthPool( config.data.health_points );
+        this.stamina_pool = new GameLib.StaminaPool( config.data.stamina_points );
+        this.palette = [0, 0];
+        this.cells = config.data.cells;
         this.cell = 0;
+        this.textures = [config.data.name];
+        this.palette = config.data.palettes[config.palette];
+    }
+
+    get body( ) {
+        return this.cells[this.cell].body;
+    }
+
+    get bottom( ) {
+        return this.y + this.body.y + this.body.height / 2;
+    }
+
+    set bottom(n) {
+        this.y = n - this.body.y - this.body.height / 2;
+    }
+
+    update( config ) {
+
     }
 
     current_state( ) {
         return Object.assign( super.current_state( ), {
-            textures: ['garf'],
+            textures: this.textures,
             shader: 'rumbler',
             palette: this.palette,
         })

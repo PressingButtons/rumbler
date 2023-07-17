@@ -36,12 +36,11 @@ const setTexture = ( shader, texture, index ) => {
 }
 
 const setTransform = ( matrix, object ) => {
-    const position = [ object.position[0] - object.half_w,  object.position[1] - object.half_h, 0 ];
-    mat4.fromTranslation( matrix, position );
+    mat4.fromTranslation( matrix, object.position );
     mat4.rotateX( matrix, matrix, object.rotation[0] ); 
     mat4.rotateY( matrix, matrix, object.rotation[1] ); 
     mat4.rotateZ( matrix, matrix, object.rotation[2] );
-    mat4.translate( matrix, matrix, [ object.half_w, object.half_h, 0 ]);
+    mat4.translate( matrix, matrix, [ -object.half_w, -object.half_h, 0 ]);
     mat4.scale( matrix, matrix, [object.width, object.height, 1]); 
 }
 
@@ -96,6 +95,7 @@ const createTexture = bitmap => {
 const setPalette =  data => {
     data = new Uint8Array(data);
     gl.bindTexture  (gl.TEXTURE_2D, textures.palette_group);
+    gl.pixelStorei  (gl.UNPACK_ALIGNMENT, 1);
     gl.texImage2D   (gl.TEXTURE_2D, 0, gl.LUMINANCE, data.length, 1, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);

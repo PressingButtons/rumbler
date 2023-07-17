@@ -13,31 +13,33 @@ let game;
 //==========================================
 Runner.run( 'polling', Input.poll );
 //==========================================
-// methods
+// Admin
 //==========================================
-const createGame = function( config ) {
+const admin = { };
 
-}
-
-
-export default {
-
-    get initialized( ) {return initialized },
-
-    init: async function( ) {
-        await Graphics.init(document.querySelector('canvas'));        
-        Object.defineProperties( this, {
-            graphics: { value: Graphics },
-            _createGame: { value: createGame },
-            _game: { get( ) { return game } },
-            input: { value: Input },
-            runner: { value: Runner },
-            menu: {value: Menus},
-            battle_system: {value: BattleSystem}
-        });
-
-        await preload( this );
-
+admin.init = async function( ) {
+    await Graphics.init(document.querySelector('canvas')); 
+    admin.graphics = Graphics;
+    admin.runner = Runner;
+    admin.input = Input;
+    admin.menu = Menus;
+    //defining methods 
+    this.createGame = function( config, func ) {
+        BattleSystem.create({
+            time: config.time,
+            mode: config.mode, 
+            player1:  {
+                palette: config.player1. palette || 0,
+                data: { ...this.db.gameobjects.fighters[config.player1.name] }
+            },
+            player2: {
+                palette: config.player2.palette || 0,
+               data: { ...this.db.gameobjects.fighters[config.player2.name] }
+            }
+        }, func);
     }
 
+    await preload( this );
 }
+
+export default admin;
