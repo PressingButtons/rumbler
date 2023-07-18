@@ -12,7 +12,7 @@ let render_detail = { };
 //==========================================
 window.onload = async event => {
     await admin.init( );
-    admin.graphics.fill([0, 0, 1, 0.2]);
+    admin.graphics.fill([0, 0, 0.2, 1]);
     //==========================================
     // Draw Render Detail
     //==========================================
@@ -20,11 +20,9 @@ window.onload = async event => {
         admin.graphics.render( render_detail );
     });
     //==========================================
-    // 
+    // DEBUG INPUT
     //==========================================
-    document.addEventListener('input_pressed', event => {
-        console.log( event.detail );
-    });
+    //document.addEventListener('input_pressed', event => { console.log( event.detail );});
     //==========================================
     // Updating State Detail
     //==========================================

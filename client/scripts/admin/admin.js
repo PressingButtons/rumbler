@@ -4,10 +4,22 @@ import preload from './preload.js';
 import * as Input from '../libs/input.js';
 import * as Menus from './menu.js';
 import * as BattleSystem from '../libs/battle/battle.js'
+import GameController from './controller.js';
+
 
 let initialized = false;
 let game; 
+//==========================================
+// Initiate GameControllers
+//==========================================
+const controller1 = new GameController('keyboard');
+const controller2 = new GameController(null);
+controller1.configureDefaultKeyboard( );
 
+document.addEventListener('gamepad_connected', event => {
+    controller2.setSource( event.detail );
+    controller2.configureDefaultGamepad( );
+})
 //==========================================
 // library setups
 //==========================================

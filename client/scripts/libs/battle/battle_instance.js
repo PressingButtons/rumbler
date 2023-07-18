@@ -55,7 +55,6 @@
         }
 
         #initPlayers( config ) {
-            console.log( config );
             this.player1 = createPlayer( config.player1 );
             this.player1.x = BattleInstance.STAGE_WIDTH / 2 - 50;
             this.player1.bottom = BattleInstance.FLOOR;
@@ -165,7 +164,6 @@
     // Creating a Player Object
     //==========================================
     const createPlayer = config => {
-        console.log( config );
         const player = new GameLib.Rumbler( config );
         return player;
     }
