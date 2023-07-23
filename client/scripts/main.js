@@ -28,18 +28,17 @@ window.onload = async event => {
     //==========================================
     const updateState = state => {
         render_detail = state;
+        admin.battle.sendInput({cnt1: admin.cnt1.pressed, cnt2: admin.cnt2.pressed});
     }
     //==========================================
     // 
     //==========================================
-    /*
-    admin.battle_system.create({
-        time: 100, mode: 0,
-        player1: { width: 96, height: 96, animations: [] },
-        player2: { width: 96, height: 96, animations: [] },
-    }, updateState);
-    */
-   admin.createGame({mode: 0, time: 10000, player1: { palette: 0, name: 'garf'} , player2: {palette: 1, name: 'garf'}}, updateState);
+    admin.battle.create({
+        mode: 0, time: 10000, 
+        player1: { palette: 0, data: admin.getRumbler('garf')} , 
+        player2: {palette: 1, data: admin.getRumbler('garf')}}, 
+        updateState
+    );
     //==========================================
     // 
     //==========================================

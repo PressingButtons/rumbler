@@ -34,3 +34,7 @@ export async function create( config, state_receiver ) {
     messenger.listen('state', state_receiver);
     return messenger.sendAsync('create', config );
 }
+
+export function sendInput( config ) {
+    messenger.send( 'input', config );
+}

@@ -37,10 +37,11 @@
                 "health_points": 10000,
                 "stamina_points": 1000,
                 "stats": {
-                    "walk_speed": 50, 
+                    "forward_walk_speed": 100, 
+                    "backward_walk_speed": 50, 
                     "dash_speed": 120,
                     "run_speed": 80,
-                    "jump_power": 120
+                    "jump_power": 64
                 },
 
                 "palettes" : [
@@ -55,15 +56,41 @@
                     {
                         "body": { "x": 0, "y": 6, "width": 26, "height": 49 },
                         "hitboxes": [ ],
-                        "hurtboxes": []
+                        "hurtboxes": [{ "x": 0, "y": 6, "width": 26, "height": 49 }]
+                    },
+                    {
+                        "body": { "x": 0, "y": 6, "width": 26, "height": 49 },
+                        "hitboxes": [],
+                        "hurtboxes": [
+                            { "x": -2, "y": 18, "width": 26, "height": 26 },
+                            { "x": -8, "y": -2, "width": 26, "height": 23 }
+                        ]
+                    },
+                    {
+                        "body": { "x": 0, "y": 6, "width": 26, "height": 49 },
+                        "hitboxes": [
+                            { "x": 20, "y": 4, "width": 30, "height": 15 }
+                        ],
+                        "hurtboxes": [
+                            { "x": 2, "y": 6, "width": 28, "height": 49 },
+                            { "x": 20, "y": 2, "width": 15, "height": 10 }
+                        ]
                     }
                 ],
     
                 "animations" : {
                     "idle": {
-                        "on_start": null, "on_end": null,
+                        "on_start": "attack_start", "on_end": null,
                         "frames": [
                             {"cell": 0, "duration": 100, "on_frame": null}
+                        ]
+                    },
+
+                    "light_attack_1": {
+                        "on_start": null, "on_end": "attack_end",
+                        "frames": [
+                            {"cell": 1, "duration": 100, "on_frame": null},
+                            {"cell": 2, "duration": 200, "on_frame": null}
                         ]
                     }
                 },

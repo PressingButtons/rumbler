@@ -93,7 +93,9 @@ export default class GameController {
             up:    ['w', 'arrowup'],
             down:  ['s', 'arrowdown'],
             left:  ['a', 'arrowleft'], 
-            right: ['d', 'arrowright']
+            right: ['d', 'arrowright'],
+            jump:  [' '],
+            light: ['y']
         })
     }
 
@@ -102,7 +104,9 @@ export default class GameController {
             up:    [12],
             down:  [13],
             left:  [14], 
-            right: [15]
+            right: [15],
+            jump:  [1],
+            light: [0]
         })
     }
  

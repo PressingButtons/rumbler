@@ -23,10 +23,10 @@ class SignalObject {
         delete this.#signals[signal];
     }
 
-    signal( phrase ) {
+    signal( phrase, options ={ }) {
         if(!this.#signals[phrase]) return;
         for(const func of this.#signals[phrase])
-            func( );
+            func( options );
     }
 
 }

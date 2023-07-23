@@ -6,5 +6,10 @@
     "rumbler" : {
         "vertex": "shader/glsl/rumbler.vertex.glsl",
         "fragment": "shader/glsl/rumbler.fragment.glsl"
+    },
+
+    "color": {
+        "vertex" : "shader/glsl/color-vertex.glsl",
+        "fragment": "shader/glsl/color-fragment.glsl"
     }
 }

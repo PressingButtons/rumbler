@@ -40,7 +40,7 @@ const setTransform = ( matrix, object ) => {
     mat4.rotateX( matrix, matrix, object.rotation[0] ); 
     mat4.rotateY( matrix, matrix, object.rotation[1] ); 
     mat4.rotateZ( matrix, matrix, object.rotation[2] );
-    mat4.translate( matrix, matrix, [ -object.half_w, -object.half_h, 0 ]);
+    mat4.translate( matrix, matrix, [ -object.width * 0.5, -object.height * 0.5, 0 ]);
     mat4.scale( matrix, matrix, [object.width, object.height, 1]); 
 }
 
@@ -179,4 +179,46 @@ const renderRumbler = (shader, object) => {
     gl.uniform4fv( shader.uniforms.u_tint, object.tint );
     // ==========================================
     draw(0, 4);
+    if(DEBUG) renderBoxes( object );
+}
+
+const renderBoxes = object => {
+    const shader = useShader('color');
+    renderBox(shader, object, object.rect, [0, 1, 0, 0.3]);
+    for( const hurtbox of object.hurtboxes ) renderHurtbox( shader, object, hurtbox);
+    for( const hitbox of object.hitboxes ) renderHitbox( shader, object, hitbox);
+}
+
+const renderBox = (shader, object, box, color) => {
+    setBuffer('position');
+    // ==========================================
+    setAttribute(shader, 'a_position', 2, 0, 0);
+    // ==========================================
+    gl.uniformMatrix4fv(shader.uniforms.u_projection, false, m0);
+    // ==========================================
+    const x = object.position[0] + box.x - box.width * 0.5;
+    const y = object.position[1] + box.y - box.height * 0.5;
+    mat4.fromRotationTranslationScale( m1, [0, 0, 0, 0], [x, y, 0], [box.width, box.height, 1]);
+    gl.uniformMatrix4fv(shader.uniforms.u_transform,  false, m1);
+    // ==========================================
+    gl.uniform4fv( shader.uniforms.u_tint, color );
+    // ==========================================
+    draw(0, 4);
+
+}
+
+const renderHurtbox = (shader, gameobject, box) => {
+    const rect = Object.assign({
+        left: gameobject.position[0] + box.x,
+        top: gameobject.position[1] + box.y
+    }, box);
+    renderBox( shader, rect, [0, 0, 1, 0.3]);
+}
+
+const renderHitbox = (shader, gameobject, box) => {
+    const rect = Object.assign({
+        left: gameobject.position[0] + box.x,
+        top: gameobject.position[1] + box.y
+    }, box);
+    renderBox( shader, rect, [1, 0, 0, 0.3]);
 }

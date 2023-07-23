@@ -35,23 +35,23 @@ admin.init = async function( ) {
     admin.runner = Runner;
     admin.input = Input;
     admin.menu = Menus;
-    //defining methods 
-    this.createGame = function( config, func ) {
-        BattleSystem.create({
-            time: config.time,
-            mode: config.mode, 
-            player1:  {
-                palette: config.player1. palette || 0,
-                data: { ...this.db.gameobjects.fighters[config.player1.name] }
-            },
-            player2: {
-                palette: config.player2.palette || 0,
-               data: { ...this.db.gameobjects.fighters[config.player2.name] }
-            }
-        }, func);
+    admin.battle = BattleSystem;
+    admin.getRumbler = name => {
+        return admin.db.gameobjects.fighters[name];
     }
-
+    admin.cnt1 = controller1;
+    admin.cnt2 = controller2;
+    
     await preload( this );
 }
+
+
+document.addEventListener('keydown', event => {
+
+    if( event.key == 'D' && event.altKey ) {
+        Graphics.debug( );
+    }
+
+});
 
 export default admin;

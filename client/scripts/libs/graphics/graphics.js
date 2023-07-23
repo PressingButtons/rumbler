@@ -48,3 +48,7 @@ export async function setTexture( name, image ) {
 export function render( detail ) {
     messenger.send('render', detail );
 }
+
+export function debug( ) {
+    messenger.send('DEBUG');
+}

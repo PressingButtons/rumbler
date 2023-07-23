@@ -4,9 +4,34 @@
 const STAGE_HEIGHT = 600, STAGE_WIDTH = 800;
 let game;
 //=========================================================
+//  Declare Namepsaces
+//=========================================================
+const Component = { },
+      GameObject = { };
+      Signal = { };
+//=========================================================
 //  Import Scripts
 //=========================================================
-importScripts('./signal_object.js', './game_lib.js', './battle_instance.js');
+importScripts(
+    './signal_object.js', 
+    './game_lib.js', 
+    './battle_instance.js', 
+    './collider.js'
+    );
+
+importScripts(
+    './components/animator.js',
+    './components/vector.js',
+);
+
+importScripts(
+    './signals/rumbler.js'
+)
+
+importScripts(
+    './objects/gameobject.js',
+    './objects/rumbler.js'
+)
 //=========================================================
 //  Messenger
 //=========================================================

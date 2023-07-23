@@ -7,7 +7,7 @@ const textures = { };
 const m0 = new Float32Array(16);
 const m1 = new Float32Array(16);
 const m2 = new Float32Array(16);
-const DEBUG = false;
+let DEBUG = false;
 //========================================================
 // Importing Scripts
 //========================================================
@@ -45,6 +45,9 @@ self.onmessage = async event => {
             setProjection( m0, message.content.camera );
             let shader = null;
             for( const object of message.content.objects ) shader = render( object, shader );
+        break;
+        case 'DEBUG': 
+            DEBUG = DEBUG ? false: true;
         break;
     }
 }
