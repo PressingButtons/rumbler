@@ -1,0 +1,33 @@
+:root {
+    --background-color-1: #484045;
+    --font-families: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+body, html, main, article {
+    width: 100%; height: 100%;
+    margin: 0; padding: 0;
+}
+
+body {
+    font-family: var(--font-families);
+}
+
+article {
+    display: flex; 
+    align-items: center;
+    justify-content: center; 
+}
+
+section.game-container {
+    background-color: black;
+    position: relative;
+    aspect-ratio: 16/9;
+    height: auto;
+    max-height: 100%;
+    width: 100%;
+}
+
+canvas {
+    image-rendering: pixelated;
+    display: block;
+}

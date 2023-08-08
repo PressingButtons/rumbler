@@ -1,0 +1,35 @@
+:root {
+    --prompt-background: rgb(44, 43, 44);
+    --prompt-wrapper_background: rgba(0, 0, 0, 0.6);
+}
+
+.game-prompt {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--prompt-wrapper_background);
+    display: flex; justify-content: center; align-items: center;
+
+    .game-prompt_wrapper {
+        padding: 12px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        background-color: var(--prompt-background);
+        color: white;
+        border-radius: 8px;
+        text-align: center;
+    }
+    
+
+    .game-prompt_description {
+        text-align: center;
+    }
+
+    .game-prompt_options {
+        display: inline-block;
+
+        > input {
+            margin: 4px;
+        }
+
+    }
+
+}

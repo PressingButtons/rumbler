@@ -1,0 +1,122 @@
+{
+    "settings" : {
+        "difficulty": 5,
+        "match_settings":  { "wins": 2, "round_time": 45}
+    },
+    "resolution": {
+        "values" :[[800, 450],[1024, 576],[1280, 720],[2048, 1536]],
+        "selection": 0
+    },
+    "control_schemes" : {
+        "sys_default_keyboard" : { 
+            "left": "a", "right": "d", "down": "s", "up": "W", 
+            "a": "y", "b": "u", "c": "h", "d": "j", "e": "i", "f": "k",
+            "menu": "backspace", "confirm": "y", "cancel": "h"
+        },
+
+        "sys_default_gamepad": {
+            "left": "11", "right": "12", "down": "13", "up": "14", 
+            "a": "1", "b": "2", "c": "0", "d": "3", "e": "7", "f": "9",
+            "menu": "9", "cancel": "10"
+        }
+    },
+    "records" : { },
+
+    "stages" : {
+        "summit" : {
+            "tiles" : {},
+            "skybox": { "texture": "dusk", "width": 816, "height": 600 },
+            "background": { "texture": null, "width": 0, "height": 0},
+            "ground": { "texture": null, "width": 0, "height": 0}
+        }
+    },
+
+    "gameobjects" : {
+
+        "fighters" : {
+            "garf" : {
+                "name": "garf",
+                "width": 96, "height": 96,
+                "health_points": 10000,
+                "stamina_points": 1000,
+                "stats": {
+                    "forward_walk_speed": 100, 
+                    "backward_walk_speed": 50, 
+                    "dash_speed": 120,
+                    "run_speed": 80,
+                    "jump_power": 64
+                },
+
+                "palettes" : [
+                    [0, 0], [0, 1], [1, 0], [3, 2], [4, 2]
+                ],
+
+                "abilities": {
+
+                },
+
+                "cells" : [
+                    {
+                        "body": { "x": 0, "y": 6, "width": 26, "height": 49 },
+                        "hitboxes": [ ],
+                        "hurtboxes": [{ "x": 0, "y": 6, "width": 26, "height": 49 }]
+                    },
+                    {
+                        "body": { "x": 0, "y": 6, "width": 26, "height": 49 },
+                        "hitboxes": [],
+                        "hurtboxes": [
+                            { "x": -2, "y": 18, "width": 26, "height": 26 },
+                            { "x": -8, "y": -2, "width": 26, "height": 23 }
+                        ]
+                    },
+                    {
+                        "body": { "x": 0, "y": 6, "width": 26, "height": 49 },
+                        "hitboxes": [
+                            { "x": 20, "y": 4, "width": 30, "height": 15 }
+                        ],
+                        "hurtboxes": [
+                            { "x": 2, "y": 6, "width": 28, "height": 49 },
+                            { "x": 20, "y": 2, "width": 15, "height": 10 }
+                        ]
+                    }
+                ],
+    
+                "animations" : {
+                    "idle": {
+                        "on_start": [null], "on_end": [null],
+                        "frames": [
+                            {"cell": 0, "duration": 100, "on_frame": []}
+                        ]
+                    },
+
+                    "ground_light_1": {
+                        "on_start": [null], "on_end": ["attack_end"],
+                        "frames": [
+                            {"cell": 1, "duration": 100, "on_frame": []},
+                            {"cell": 2, "duration": 200, "on_frame": []}
+                        ]
+                    }
+                },
+
+                "combo_patterns" : {
+
+                }
+            }
+        },
+
+        "projectiles": {
+
+        },
+
+        "sfx" : {
+
+        }
+
+    },
+
+    "textures": {
+        "palette": "palette.webp",
+        "summit": "stage_summit.webp",
+        "garf"  : "garf-palette.webp"
+    }
+}

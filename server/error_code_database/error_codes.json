@@ -1,9 +1,0 @@
-{
-    "ecf": {
-        "name": "connection_failure",
-        "sub_codes": {
-            "000": "Failed to connect to server.",
-            "001": "Failed to connect to room."
-        }
-    }
-}

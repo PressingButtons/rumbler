@@ -1,0 +1,36 @@
+:root {
+    --health-gradient: 
+}
+
+body, html, main, article { 
+    width: 100%; height: 100%; padding: 0; margin: 0; 
+}
+
+body {
+    background-color: #777;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+article {
+    display: flex; justify-content: center; align-items: center;
+}
+
+section.game-container {
+    background: black;
+    position: relative;
+    aspect-ratio: 16/9;
+    height: auto;
+    max-height: 100%;
+    max-width: 100%;
+}
+
+div.game-overlay {
+    position: absolute; width: 100%; height: 100%; top:0; left: 0;
+}
+
+canvas { 
+    display: block; 
+    image-rendering: pixelated; 
+    height: 100%;
+    width: 100%;
+}

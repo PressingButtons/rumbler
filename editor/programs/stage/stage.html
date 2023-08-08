@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="../../../style.css">
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <article id="stage_builder">
+            <section id="workspace" style="display: flex; justify-content: center; align-items: center;">
+                <div style="position: relative; background: black;">
+                    <canvas id="main"></canvas>
+                    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; left: 0;">
+                        <defs>
+                            <pattern id="grid" width="16" height="16" patternUnits="userSpaceOnUse">
+                                <path d="M 16 0 L 0 0 0 16" fill="none" stroke="gray" stroke-width="1"/>
+                            </pattern>
+                        </defs>
+                        
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                    </svg>
+                </div>
+            </section>
+            <!-- panels -->
+            <section id="work_panels">
+                <button id="save">Save</button>
+                <!-- background color -->
+                <div class="field">
+                    <input type="color" id="background-color" autocomplete="off">
+                    <label for="background-color">Background Color</label>
+                </div>
+                <!-- background image -->
+                <div class="picture">
+                    <figure>
+                        <img src="" alt="" id="main-floor">
+                        <figCaption></figCaption>
+                    </figure>
+                    <input type="file" autocomplete="off">
+                </div>
+                <!-- floor image -->
+                <div class="picture">
+                    <figure>
+                        <img src="" alt="" id="main-floor">
+                        <figCaption></figCaption>
+                    </figure>
+                    <input type="file" autocomplete="off">
+                </div>
+                <!-- tiles -->
+                <div class="tiles">
+
+                </div>
+            </section>
+        </article>
+        <script src="../stage.js" type="module" async defer></script>
+    </body>
+</html>
