@@ -158,7 +158,8 @@ const setUniform = ( shader, uniform_method, uniform_name, ...value ) => {
 }
 
 const useShader = (name, shader) => {
-    if( shader && shader == shaders[name]) return shader;
+    if( shader && shader == shaders[name]) return 
+    shader;
     shader = shaders[name];
     if(!shader) return false;
     gl.useProgram( shader.program );
@@ -241,10 +242,11 @@ const render = object => {
 
 
 const renderSingleTexture = (shader, object) => {
-    const source = textures[object.textures[0]];
+    const source = textures[object.texture];
+    if( !source ) return;
     setTexture( shader, source.texture, 0);
     // ==========================================
-    setBuffer( 'position');
+    setBuffer( 'square');
     setAttribute( shader, 'a_position', 2, 0, 0);
     // ==========================================
     gl.uniformMatrix4fv(shader.uniforms.u_projection, false, m0);
@@ -258,10 +260,10 @@ const renderSingleTexture = (shader, object) => {
 }
 
 const renderRumbler = (shader, object) => {
-    const source = textures[object.textures[0]];
+    const source = textures[object.texture];
     setTexture( shader, source.texture, 0);
     // ==========================================
-    setBuffer( 'position');
+    setBuffer( 'square');
     setAttribute( shader, 'a_position', 2, 0, 0);
     // ==========================================
     setTexture( shader, textures.palette.texture, 1);
@@ -355,8 +357,8 @@ Messenger.setRoute('texture', function(message) {
 
 Messenger.setRoute('render', function( message ) {
     fill([0, 0, 0.2, 1]);
-    if( !message.content.camera ) return;
-    setProjection( m0, message.content.camera );
-    for( const object of message.content.objects ) shader = render( object, shader );
+    const detail = JSON.parse(message.content);
+    setProjection( m0, detail.camera );
+    for( const object of detail.objects ) shader = render( object, shader );
 
 });

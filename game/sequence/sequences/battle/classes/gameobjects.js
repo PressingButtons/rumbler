@@ -12,6 +12,8 @@ GameObject.GameObject = class extends SignalObject {
         this.height = config.height;
         this.hw = config.height * 0.5;
         this.hh = config.height * 0.5;
+        this.shader = 'single_texture';
+        this.tint = [1, 1, 1, 1];
     }
 
     get left( ) { return this.position.x - this.hw }
@@ -32,7 +34,9 @@ GameObject.GameObject = class extends SignalObject {
             rotation: [...this.rotation.data],
             width: this.width,
             height: this.height,
-            texture: this.texture
+            texture: this.texture,
+            shader: this.shader,
+            tint: this.tint
         }
     }
 

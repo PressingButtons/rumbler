@@ -102,8 +102,10 @@ class LevelDesign {
 
     constructor( config ) {
         this.skybox     = new GameObject.GameObject( config.skybox );
+        this.skybox.bottom = 225;
         this.background = new GameObject.GameObject( config.background );
         this.ground     = new GameObject.GameObject( config.ground );
+        this.ground.bottom = 225;
     }
     
 }

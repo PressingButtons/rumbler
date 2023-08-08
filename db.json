@@ -27,7 +27,7 @@
             "tiles" : {},
             "skybox": { "texture": "dusk", "width": 816, "height": 600 },
             "background": { "texture": null, "width": 0, "height": 0},
-            "ground": { "texture": null, "width": 0, "height": 0}
+            "ground": { "texture": "summit", "width": 800, "height": 464}
         }
     },
 
@@ -116,7 +116,8 @@
 
     "textures": {
         "palette": "palette.webp",
-        "summit": "stage_summit.webp",
-        "garf"  : "garf-palette.webp"
+        "garf"  : "garf-palette.webp",
+        "dusk"  : "skybox/dusk.webp",
+        "summit": "stage/summit.webp"
     }
 }

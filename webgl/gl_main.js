@@ -18,8 +18,12 @@ manager.fill = function( color ) {
     this.sendMessage('fill', color );
 }
 
+manager.createTexture = function( name, bitmap ) {
+    return this.sendMessage('texture', {name: name, bitmap: bitmap}, [bitmap])
+}
+
 manager.render = function( config ) {
-    this.sendMessage('render', config );
+    return this.sendMessage('render', config );
 }
 
 export { manager }

@@ -24,10 +24,7 @@ article {
 section.game-container {
   background-color: black;
   position: relative;
-  aspect-ratio: 16/9;
   height: auto;
-  max-height: 100%;
-  width: 100%;
 }
 
 canvas {
