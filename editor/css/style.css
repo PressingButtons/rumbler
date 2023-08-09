@@ -1,0 +1,134 @@
+@charset "UTF-8";
+:root {
+  --bg-0: #445;
+  --bg-1: #AAA;
+  --bg-2: #334;
+  --color-0: var(--bg-0);
+  --color-1: #CCC;
+  --dark-tint: (0, 0, 0, 0.5);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: var(--bg-0);
+}
+
+header {
+  text-align: center;
+}
+
+header.list-header {
+  text-align: start;
+}
+
+section {
+  background-color: var(--bg-1);
+  color: var(--color-0);
+  margin: 1px;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+section#editor_area {
+  flex: 1;
+}
+
+nav {
+  padding: 0;
+  margin: 0;
+}
+
+nav#database-navigation {
+  background-color: var(--bg-2);
+  width: 200px;
+  height: 100%;
+  margin: 1px;
+  padding: 6px;
+  color: var(--color-1);
+}
+
+ul {
+  list-style-type: none;
+  margin: 4px;
+  padding: 0;
+}
+
+ul > li {
+  margin-left: 25px;
+  padding: 6px;
+}
+
+div.wrapper, article {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+header.list-header::before {
+  content: "🗀";
+  margin-right: 6px;
+}
+
+.database-list-container header, .database-list-container li {
+  cursor: pointer;
+}
+.database-list-container header:hover, .database-list-container li:hover, .database-list-container li.selected {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #FFA;
+}
+
+iframe {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+}
+
+#editor_area {
+  display: flex;
+}
+
+section.workspace {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+article {
+  display: flex;
+  flex-flow: column nowrap;
+}
+article header {
+  background-color: #777;
+  color: #FFA;
+  padding: 6px;
+  margin-bottom: 1px;
+}
+
+canvas {
+  display: block;
+}
+
+section.stage-panels {
+  width: 300px;
+}
+
+.work-canvas_container {
+  background-color: rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+.work-canvas_container svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/*# sourceMappingURL=style.css.map */
