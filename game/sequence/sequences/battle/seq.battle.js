@@ -17,8 +17,12 @@ sequence.enter = async function( config ) {
     });
     // creating battle scenario =====================================
     await battle.sendMessage('create', {
-        stage: this.system.database.stages[ config.stage ]
+        stage: this.system.database.stages[ config.stage ],
+        p1: this.system.database.gameobjects.rumblers[ config.p1.type ],
+        p2: this.system.database.gameobjects.rumblers[ config.p2.type ]
     });
+
+    await battle.sendMessage('run');
 }
 
 sequence.exit = async function( modules ) {

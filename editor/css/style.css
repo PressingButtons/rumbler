@@ -111,7 +111,7 @@ article header {
   margin-bottom: 1px;
 }
 
-canvas {
+canvas, img {
   display: block;
 }
 
@@ -119,16 +119,52 @@ section.stage-panels {
   width: 300px;
 }
 
-.work-canvas_container {
-  background-color: rgba(0, 0, 0, 0.2);
+.workspace-element {
+  min-width: 96px;
+  min-height: 96px;
+  background-color: rgba(0, 0, 0, 0.25);
   position: relative;
 }
-.work-canvas_container svg {
+.workspace-element.stage-workspace {
+  min-width: 800px;
+  min-height: 450px;
+}
+.workspace-element.stage-workspace .skybox, .workspace-element.stage-workspace .background {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.workspace-element.stage-workspace .mainground {
+  position: relative;
+}
+.workspace-element .plot-canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+}
+.workspace-element svg {
   width: 100%;
   height: 100%;
   position: absolute;
   top: 0;
   left: 0;
+  border: 1px solid white;
+}
+.workspace-element svg .workspace-cursor {
+  position: absolute;
+}
+
+section.panel section header {
+  background-color: #888;
+}
+section.panel section > div {
+  padding: 8px;
+}
+section.panel section div.field {
+  display: flex;
+  justify-content: space-between;
 }
 
 /*# sourceMappingURL=style.css.map */

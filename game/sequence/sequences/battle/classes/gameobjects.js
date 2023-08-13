@@ -14,6 +14,7 @@ GameObject.GameObject = class extends SignalObject {
         this.hh = config.height * 0.5;
         this.shader = 'single_texture';
         this.tint = [1, 1, 1, 1];
+        this.cell = 0;
     }
 
     get left( ) { return this.position.x - this.hw }
@@ -36,7 +37,8 @@ GameObject.GameObject = class extends SignalObject {
             height: this.height,
             texture: this.texture,
             shader: this.shader,
-            tint: this.tint
+            tint: this.tint,
+            cell: this.cell
         }
     }
 
@@ -48,15 +50,14 @@ GameObject.DynamicObject = class extends GameObject.GameObject {
         super( config )
         this.velocity = new Vector.Vector( Float32Array );
         this.acceleration = new Vector.Vector( Float32Array );
-        this.setChannel('update', this.move );
+        this.setChannel('update', this.move.bind(this) );
     }
 
     pack( ) {
-        const base = GameObject.GameObject.pack.call( this );
-        return Object.assign( base, { 
+        return Object.assign( super.pack( ), {
             velocity: [...this.velocity.data],
             acceleration: [...this.acceleration.data]
-        });
+        })
     }
 
     move( config ) {

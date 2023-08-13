@@ -271,7 +271,7 @@ const renderRumbler = (shader, object) => {
     // ==========================================
     setTexture( shader, textures.palette_group.texture, 2);
     setPalette( object.palette );
-    gl.uniform2iv( shader.uniforms.u_map_size, [object.palette.length, 1]);
+    gl.uniform2f( shader.uniforms.u_map_size, object.palette.length, 1);
     // ==========================================
     gl.uniformMatrix4fv(shader.uniforms.u_projection, false, m0);
     // ==========================================
@@ -333,7 +333,7 @@ const renderHitbox = (shader, gameobject, box) => {
 Messenger.setRoute('init', function( message ) {
     gl = message.content.getContext('webgl', {premultipledAlpha: false});
     buffers.square = createBuffer(new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]));
-    textures.palette_scheme = gl.createTexture( );
+    textures.palette_group = gl.createTexture( );
     return true;
 });
 

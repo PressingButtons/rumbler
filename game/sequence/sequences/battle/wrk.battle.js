@@ -6,6 +6,7 @@
     './classes/signalobject.js',
     './classes/vector.js',
     './classes/gameobjects.js',
+    './classes/rumbler.js',
     './sys.battle.js'
 );
 /** == -----------------------------------------
@@ -22,6 +23,12 @@ Messenger.setRoute('create', function( message ) {
     system.setChannel('instance', function( options ){
         const instance = JSON.stringify(system.instance( ));
         Messenger.sendMessage('instance', instance);
+    });
+    /** == -----------------------------------------
+     *  Messenger Routes
+     == -------------------------------------------*/
+    Messenger.setRoute('run', function( options) {
+        system.run( 60 );
     });
     /** == -----------------------------------------
      *  Return initial instance
