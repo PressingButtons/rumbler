@@ -1,20 +1,23 @@
+import { loadDatabase } from "../utils/code.js";
+
 window.onload = async event => {
-    const database = await fetch('/db.json').then( res => res.json( ));
+    const database = await loadDatabase( );
     /** ================================================
      *  Populate Navigation 
      ** ===============================================*/
     const db_nav = document.getElementById('database-entries');
     // Setting Stages 
     db_nav.appendChild(createDatabseList('Stages', database.stages));
-    db_nav.appendChild(createDatabseList('Rumblers', database.gameobjects.rumblers));
-    db_nav.appendChild(createDatabseList('Projectiles', database.gameobjects.projectiles));
-    db_nav.appendChild(createDatabseList('Special Effects', database.gameobjects.sfx));
+    /*
+    db_nav.appendChild(createDatabseList('Rumblers', data.base.gameobjects.rumblers));
+    db_nav.appendChild(createDatabseList('Projectiles', data.base.gameobjects.projectiles));
+    db_nav.appendChild(createDatabseList('Special Effects', data.base.gameobjects.sfx));
     /** ================================================
      *  Selecting Projects
      ** ===============================================*/
     const iframe = document.getElementById('editor_screen');
     document.addEventListener('select-project', event => {     
-
+        console.clear( );
         const project = event.detail.project;
 
         iframe.onload = event => {
@@ -45,17 +48,16 @@ const createDatabseList = ( name, group ) => {
 }
 
 
-const save = function( database ) { 
-    return fetch('/db.json', {
-        method: "POST",
-        headers: { "Content-Type": "application/json"},
-        body: JSON.stringify(database)
-    }).then( success => {
-        console.log('update successful');
-        Object.assign( database, success );
-    }).catch( failure => {
-        console.log('update-failed', failure );
-    })
+const save = async function( database ) { 
+    return sendPost('/db', database)
+    .catch( err => {
+        console.log('Error during Update', err);
+    });
 }
 
-
+const sendPost = (route, data) => {
+    return fetch( route, {
+        method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    });
+}

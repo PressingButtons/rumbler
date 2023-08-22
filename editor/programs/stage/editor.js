@@ -13,51 +13,54 @@ export default class Editor {
             'rgba(255, 255, 0, 0.5)',
             'rgba(0, 255, 255, 0.5)'
         ];
-        this.stamp = { value: -1, active: false }
+        this.stamper = { value: -1, active: false }
     }
 
     async init( ) {
         this.workspace = new StageWorkspace( );
         this.workspace.anchor( document.getElementById('main-workspace'));
-        await this.workspace.init( this.project ); 
-        this.setListeners( this.workspace );
+        await this.workspace.init( this.project );
+        this.setListeners( );
         this.initTiles( );
     }
 
+    
     initTiles( ) {
         for(const key in this.project.tiles.map) {
-            this.drawTile( this.project.tiles.map[key] );
+            const tile = this.project.tiles.map[key];
+            this.workspace.stamp( tile.meta.coord, this.stamp_colors[tile.value] )
         }
     }
 
-    convertToIndex( coord ) {
-        if(!coord) return null;
-        return `${coord.row}:${coord.col}`;
+    converToMapPosition( position ) {
+        return {
+            col: Math.floor( position.x / StageWorkspace.TILESIZE ),
+            row: Math.round( position.y / StageWorkspace.TILESIZE )
+        }
     }
 
     createTile( coord ) {
-        const tile = { value: this.stamp.value, meta: { } };
+        const tile = { value: this.stamper.value, meta: { } };
         tile.meta.coord = coord;
-        const index = this.convertToIndex( coord );
+        const index = `${coord.row}:${coord.col}`;
         this.project.tiles.map[index] = tile;
         return tile;
     }
 
-    createLinkedTile( coord ) {
-        const tile = this.createTile( coord );
+    linkTile( tile ) {
         tile.meta.linked = true;
-        this.linkTile( tile );
+        this.project.tiles.linked.push(tile.value);
+        this.project.tiles.linked = [...new Set( this.project.tiles.linked)];
     }
 
-    createSpawnTile( workspace, coord ) {
-        const tile = this.createTile( coord );
-        if( this.stamp.value == 5 ) {
-            this.deleteTile( this.project.tiles.spawn.p1, workspace );
-            this.project.tiles.spawn.p1 = coord;
+    createSpawnTile( coord ) {
+        if( this.stamper.value == 5 ) {
+            this.deleteTile( this.project.spawns[1] );
+            this.project.spawns[1] = tile;
         }
         else {
-            this.deleteTile( this.project.tiles.spawn.p2, workspace)
-            this.project.tiles.spawn.p2 = coord;
+            this.deleteTile( this.project.tiles.spawns[2])
+            this.project.spawns[2] = coord;
         }
     }
     
@@ -66,52 +69,53 @@ export default class Editor {
         links.splice(links.indexOf(`${coord.row}:${coord.col}`), 1);
     }
 
-    deleteTile( coord, workspace ) {
-        const tile = this.getTile(coord);
-        if( !tile ) return;
-        if( tile.meta.linked ) this.deleteLink( tile.value, coord );
-        delete project.tiles.map[this.convertToIndex(coord)];
-        if( workspace ) workspace.stamp( coord );
-    }
-
-    drawTile( tile ) {
-        this.workspace.stamp( tile.meta.coord, this.stamp_colors[tile.value ]);
+    deleteTile( coord ) {
+        const tiledata = this.getTile(coord);
+        if( !tiledata.tile ) return;
+        if( tiledata.tile.meta.linked ) this.deleteLink( tiledata.index );
+        delete project.tiles.map[tiledata.index];
     }
 
     getTile( coord ) {
-        return this.project.tiles.map[this.convertToIndex(coord)];
+        const index = `${coord.row}:${coord.col}`;
+        return { index: index, tile: this.project.tiles.map[ index ] };
     }
 
-    linkTile( tile ) {
-        const links = new Set( this.project.tiles.linked[tile.value] );
-        for( const key in this.project.tiles.map ) {
-            const current = this.project.tiles.map[key];
-            if( current.value == tile.value ) links.add(key);
-        }
-        this.project.tiles.linked[tile.value] = [...links];
+    refresh( ) {
+        this.workspace.clear( );
+        this.initTiles( );
     }
 
-    stampTile( workspace, coord ) {
-        workspace.stamp( coord, this.stamp_colors[this.stamp.value]);
-        if( this.stamp.value == -1 ) this.deleteTile( coord );
-        else if (this.stamp.value < 2 ) this.createTile( coord );
-        else if (this.stamp.value < 5 ) this.createLinkedTile( coord );
-        else this.createSpawnTile( workspace, coord );
+    stamp( position ) {
+        const mapPosition = this.converToMapPosition( position );
+        if( this.stamper .value == -1 ) this.deleteTile( mapPosition );
+        else if (this.stamper.value < 2 ) this.createTile( mapPosition );
+        else if (this.stamper.value < 5 ) this.createLinkedTile( mapPosition );
+        else this.createSpawnTile( mapPosition );
+        this.workspace.stamp( mapPosition , this.stamp_colors[this.stamp.value]);
     }
 
-    setListeners( workspace ) {
-        this.workspaceListeners( workspace );
+    setListeners( ) {
         document.getElementById('tool-selector').addEventListener('change', event => { 
-            this.stamp.value = event.target.value;
+            this.stamper.value = event.target.value;
         });
 
         document.getElementById("save-project").addEventListener('click', event => {
             document.dispatchEvent(new CustomEvent('update', { detail: this.project })); 
         });
-    }
 
-    workspaceListeners( workspace ) {
-        workspace.addEventListener('stamp', event => this.stampTile(workspace, event.detail));
-    }
+        document.getElementById('clear-tiles').addEventListener('click', event => {
+            this.project.tiles.spawns = { 1: [0, 0], 2: [0, 0]}
+            this.project.tiles.map = { };
+            this.project.linked = {2: [], 3: [], 4: []}
+            this.refresh( );
+        })
 
+        this.workspace.addEventListener('stamp', event => this.stamp(event.detail));
+
+        this.workspace.query('.workspace-listener').addEventListener('mousemove', event => {
+            const coord = this.converToMapPosition( this.workspace.mapPoint(event));
+            document.getElementById('cursor-position').textContent = `row: ${coord.row}, col: ${coord.col}`;
+        })
+    }
 }

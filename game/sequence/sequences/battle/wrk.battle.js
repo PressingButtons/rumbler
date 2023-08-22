@@ -30,6 +30,10 @@ Messenger.setRoute('create', function( message ) {
     Messenger.setRoute('run', function( options) {
         system.run( 60 );
     });
+    //input route
+    Messenger.setRoute('input_event', function( options ) {
+        system.handleInput( options.content );
+    });
     /** == -----------------------------------------
      *  Return initial instance
      == -------------------------------------------*/

@@ -5,7 +5,7 @@ GameObject.GameObject = class extends SignalObject {
 
     constructor( config ) {
         super( );
-        this.position = new Vector.Vector( Int16Array )
+        this.position = new Vector.Vector( Float32Array )
         this.rotation = new Vector.Vector( Float32Array );
         this.texture = config.texture;
         this.width = config.width;
@@ -62,9 +62,9 @@ GameObject.DynamicObject = class extends GameObject.GameObject {
 
     move( config ) {
         this.velocity.addScaled( this.acceleration, config.ms );
-        this.position.x += this.velocity.x;
+        this.position.x += this.velocity.x * config.ms;
         config.world.resolveX( this );
-        this.position.y += this.velocity.y;
+        this.position.y += this.velocity.y * config.ms;
         config.world.resolveY( this );
     }
 

@@ -4,7 +4,7 @@ class BattleSystem extends SignalObject {
     constructor( config ) {
         super( );
         this.camera = new Camera( );
-        this.camera.scale = 2;
+        this.camera.scale = 1;
         this.#initWorld( config );
         this.#initPlayers( config );
     }
@@ -33,6 +33,11 @@ class BattleSystem extends SignalObject {
         this.signal('instance');
     }
 
+    handleInput( data ) {
+        this.p1.handleInput( data );
+        this.p2.handleInput( data );
+    }
+
     instance( ) {
         return {
             camera: this.camera.pack( ),
@@ -58,11 +63,11 @@ class World {
     constructor( config ) {
         this.objects = [ ];
         this.tiles = config.tiles;
-        this.gravity = 100;
+        this.gravity = 50;
         this.level = new LevelDesign( config );
         this.add( this.level.skybox );
         this.add( this.level.background );
-        this.add( this.level.ground );
+        this.add( this.level.mainground );
     }
 
     #organize( ) {
@@ -77,6 +82,13 @@ class World {
         this.#organize( );
     }
 
+    mapPosition( x, y ) {
+        return {
+           col: Math.floor((x) / World.TILESIZE),
+           row: Math.floor((y) / World.TILESIZE)
+        }
+    }
+
     update( interval ) {
         const config = { world: this, interval, interval, ms: interval * 0.01 } 
         for(const object of this.objects) object.signal('update', config );
@@ -87,31 +99,26 @@ class World {
         return this.objects.map( object => object.pack( ));
     }
 
-    bottomLeftTile( object ) {
-        const index = `${object.bottom}:${object.left}`;
-        console.log( index );
-        return this.tiles.map[index];
-    }
-
-    bottomRightTile( object ) {
-        const index = `${object.bottom}:${object.right}`;
+    getTile( x, y ) {
+        const coord = this.mapPosition( x, y );
+        const index = `${coord.row}:${coord.col}`;
         return this.tiles.map[index];
     }
 
     isOnLand( object ) {
-        const left  = this.bottomLeftTile(object);
-        if( left ) return true; 
-        const right = this.bottomRightTile(object);
-        if( right ) return true;
-        return false;
+        if( this.getTile(object.left, object.bottom) || this.getTile(object.right, object.bottom)) return true;
+        else return false;
     }
 
     resolveX( ) {
 
     }
 
-    resolveY( ) {
-
+    resolveY( object) {
+        if( this.isOnLand(object) ) {
+            object.velocity.y = 0;
+            object.acceleration.y = 0;
+        }
     }
 
 }
@@ -151,7 +158,13 @@ class Camera {
 class PlayerManager {
 
     constructor( detail ) {
-        this.object = new Rumbler.Rumbler( detail );
+        this.object = new Rumbler.Rumbler( detail.actor );
+        this.object.controller = new PlayerController( detail.control_settings );
+    }
+
+    handleInput( input ) {
+        if( input.detail.source != this.object.controller.source ) return;
+        this.object.controller.read(input);
     }
 
     move( x, y ) {
@@ -165,6 +178,69 @@ class PlayerManager {
 
 }
 
+class PlayerController {
+
+    #buttons = {
+        up:     {value: 0, pressed: 0, released: 0},
+        down:   {value: 0, pressed: 0, released: 0},
+        left:   {value: 0, pressed: 0, released: 0},
+        right:  {value: 0, pressed: 0, released: 0},
+        light:  {value: 0, pressed: 0, released: 0},
+        strong:  {value: 0, pressed: 0, released: 0},
+        special:  {value: 0, pressed: 0, released: 0},
+        guard:  {value: 0, pressed: 0, released: 0},
+        jump:  {value: 0, pressed: 0, released: 0},
+    }
+
+    #buttonSet = new Set( );
+
+    #map = { };
+
+    constructor( config ) {
+        this.source = config.source;
+        this.#initMap( config.buttons );
+    }
+
+    get buttons( ) {
+        return this.#buttons;
+    }
+
+    get active_buttons( ) {
+        return this.#buttonSet;
+    }
+
+    #initMap( map ) {
+        for( const index in map ) this.#map[index] = map[index];
+    }
+
+    #directionalClean( ) {
+        //clean directional inputs
+    }
+
+    #update( input ) {
+        if( !this.#map[input.detail.index]) return;
+        for( const index of this.#map[input.detail.index]) {
+            if( input.type == 'input_pressed') {
+                this.#buttons[index].value = 1;
+                this.#buttons[index].pressed = input.detail.timestamp;
+                this.#buttonSet.add(index)
+            } else {
+                this.#buttons[index].value = 0;
+                this.#buttons[index].released = input.detail.timestamp;
+                this.#buttonSet.delete(index);
+            }
+        }
+
+        this.#directionalClean( );
+
+    }
+
+    read( input ) {
+        this.#update( input );
+    }
+
+}
+
 /** ===========================================================
  *  Level Design
  *  ==========================================================*/
@@ -172,10 +248,8 @@ class LevelDesign {
 
     constructor( config ) {
         this.skybox     = new GameObject.GameObject( config.skybox );
-        this.skybox.bottom = 225;
         this.background = new GameObject.GameObject( config.background );
-        this.ground     = new GameObject.GameObject( config.mainground );
-        this.ground.bottom = 225;
+        this.mainground = new GameObject.GameObject( config.mainground );
     }
     
 }

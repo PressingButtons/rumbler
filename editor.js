@@ -18,6 +18,7 @@ app.use(bodyParser.json());
 app.use('/editor', express.static('editor'));
 app.use('/images', express.static('images'));
 app.use('/utils', express.static('utils'));
+app.use('/data', express.static('data'));
 
 const fileURL = url => {
     return path.join( _dir, url );
@@ -31,11 +32,21 @@ app.get('/db.json', (req, res) => {
     res.sendFile(fileURL('db.json'));
 });
 
+app.get('/stages', (req, res) => {
+    res.sendFile(fileURL('/data/stages.json'));
+});
+
 
 app.post('/db.json', (req, res) => {
     writeFile( fileURL('db.json'), JSON.stringify(req.body) );
     res.sendFile( fileURL('db.json') );
 })
+
+app.post('/db', (req, res) => {
+    const db = req.body;
+    writeFile( fileURL('/data/stages.json'), JSON.stringify({stages: db.stages}) )
+    res.sendFile( fileURL('/data/stages.json') );
+});
 
 app.listen( port, err => {
     if( err ) throw err;

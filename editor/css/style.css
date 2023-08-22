@@ -33,6 +33,7 @@ section {
   margin: 1px;
   display: flex;
   flex-flow: column nowrap;
+  position: relative;
 }
 
 section#editor_area {
@@ -117,6 +118,16 @@ canvas, img {
 
 section.stage-panels {
   width: 300px;
+}
+
+div.positional-meta {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+div.positional-meta p {
+  border: 1px solid black;
+  background-color: #FFFFAA;
 }
 
 .workspace-element {

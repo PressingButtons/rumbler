@@ -1,6 +1,5 @@
 export default class WorkspaceElement extends EventTarget {
 
-    static TILESIZE = 16;
 
     constructor( class_name ) {
         super( );
@@ -38,34 +37,22 @@ export default class WorkspaceElement extends EventTarget {
         listener.addEventListener('mouseout', event => {
             cursor.setAttribute('opacity', 0);
             this.contact = 0;
-        })
-
-        listener.addEventListener('mousemove', event => {
-            const coord = this.#getCoord( event );
-            cursor.setAttribute('x', coord.col * WorkspaceElement.TILESIZE);
-            cursor.setAttribute('y', coord.row * WorkspaceElement.TILESIZE);
-            if( this.contact == 1) this.#signalStamp( coord );
         });
 
         listener.addEventListener('mousedown', event => {
-            this.#signalStamp(this.#getCoord(event));
             this.contact = 1;
-        });
+        })
 
         listener.addEventListener('mouseup', event => {
             this.contact = 0;
         })
     }
 
-    #signalStamp( coord ) {
-        this.dispatchEvent(new CustomEvent('stamp', {detail: coord}));
-    }
-
-    #getCoord( event ) {
+    getCoord( event ) {
         const {x, y} = event.target.getBoundingClientRect( );
         return {
-            row: Math.floor((event.clientY - y) / WorkspaceElement.TILESIZE),
-            col: Math.floor((event.clientX - x) / WorkspaceElement.TILESIZE)
+            x: event.clientX - x,
+            y: event.clientY - y
         }
     }
 
