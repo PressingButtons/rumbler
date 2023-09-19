@@ -1,70 +1,103 @@
 {
     "gameobjects" : {
+        "garf" : {
+            "name": "Garf",
+            "texture": "garf",
+            "width": 96, "height": 96,
+            "health_points": 10000,
+            "stamina_points": 1000,
+            "stats": {
+                "walk_forward" : 200, 
+                "walk_backward": 170, 
+                "jump_height"  : 64,
+                "jump_forward" : 150,
+                "jump_backward": 80
+            },
 
-        "rumblers" : {
-            "garf" : {
-                "name": "garf",
-                "texture": "garf",
-                "width": 96, "height": 96,
-                "health_points": 10000,
-                "stamina_points": 1000,
+            "palettes" : [
+                [0, 0], [0, 1], [1, 0], [3, 2], [4, 2]
+            ],
+
+            "cells" : [
+                {
+                    "body": { "x": 0, "y": 6, "width": 26, "height": 49 },
+                    "hitboxes": [ ],
+                    "hurtboxes": [{ "x": 0, "y": 6, "width": 26, "height": 49 }]
+                },
+                {
+                    "body": { "x": 0, "y": 6, "width": 26, "height": 49 },
+                    "hitboxes": [],
+                    "hurtboxes": [
+                        { "x": -2, "y": 18, "width": 26, "height": 26 },
+                        { "x": -8, "y": -2, "width": 26, "height": 23 }
+                    ]
+                },
+                {
+                    "body": { "x": 0, "y": 6, "width": 26, "height": 49 },
+                    "hitboxes": [
+                        { "x": 20, "y": 4, "width": 30, "height": 15 }
+                    ],
+                    "hurtboxes": [
+                        { "x": 2, "y": 6, "width": 28, "height": 49 },
+                        { "x": 20, "y": 2, "width": 15, "height": 10 }
+                    ]
+                }
+            ],
+
+            "animations" : {
+                "idle": {
+                    "on_start": [null], "on_end": [null],
+                    "frames": [
+                        {"cell": 0, "duration": 100, "on_frame": []}
+                    ]
+                },
+
+                "ground_light_1": {
+                    "on_start": [null], "on_end": ["attack_end"],
+                    "frames": [
+                        {"cell": 1, "duration": 100, "on_frame": []},
+                        {"cell": 2, "duration": 200, "on_frame": []}
+                    ]
+                }
+            },
+
+            "combo_patterns" : {
+
+            }
+        },
+        "blast-fireball": {
+            "name": "blast-fireball",
+            "texture": "fireballs",
+            "height": 16,
+            "width": 32,
+            "cells" : [
+                [0.875, 0.125, 1.00, 0.250],
+                [0.875, 0.250, 1.00, 0.375],
+                [0.875, 0.375, 1.00, 0.500],
+                [0.875, 0.500, 1.00, 0.625],
+                [0.875, 0.625, 1.00, 0.750]
+            ],
+            "animations" : {
                 "stats": {
-                    "walk_forward" : 10, 
-                    "walk_backward": 7, 
-                    "jump_height"  : 64
+                    "homing": 10,
+                    "speed": 250,
+                    "hp": 1,
+                    "damage": 150,
+                    "lifetime": 4000
                 },
-
-                "palettes" : [
-                    [0, 0], [0, 1], [1, 0], [3, 2], [4, 2]
-                ],
-
-                "cells" : [
-                    {
-                        "body": { "x": 0, "y": 6, "width": 26, "height": 49 },
-                        "hitboxes": [ ],
-                        "hurtboxes": [{ "x": 0, "y": 6, "width": 26, "height": 49 }]
-                    },
-                    {
-                        "body": { "x": 0, "y": 6, "width": 26, "height": 49 },
-                        "hitboxes": [],
-                        "hurtboxes": [
-                            { "x": -2, "y": 18, "width": 26, "height": 26 },
-                            { "x": -8, "y": -2, "width": 26, "height": 23 }
-                        ]
-                    },
-                    {
-                        "body": { "x": 0, "y": 6, "width": 26, "height": 49 },
-                        "hitboxes": [
-                            { "x": 20, "y": 4, "width": 30, "height": 15 }
-                        ],
-                        "hurtboxes": [
-                            { "x": 2, "y": 6, "width": 28, "height": 49 },
-                            { "x": 20, "y": 2, "width": 15, "height": 10 }
-                        ]
-                    }
-                ],
-
-                "animations" : {
-                    "idle": {
-                        "on_start": [null], "on_end": [null],
-                        "frames": [
-                            {"cell": 0, "duration": 100, "on_frame": []}
-                        ]
-                    },
-
-                    "ground_light_1": {
-                        "on_start": [null], "on_end": ["attack_end"],
-                        "frames": [
-                            {"cell": 1, "duration": 100, "on_frame": []},
-                            {"cell": 2, "duration": 200, "on_frame": []}
-                        ]
-                    }
-                },
-
-                "combo_patterns" : {
-
+                "main": {
+                    "on_start": [null],
+                    "on_end": [null],
+                    "frames": [
+                        {"cell": 0, "duration": 100, "on_frame": []},
+                        {"cell": 1, "duration": 100, "on_frame": []},
+                        {"cell": 2, "duration": 100, "on_frame": []},
+                        {"cell": 3, "duration": 100, "on_frame": []},
+                        {"cell": 4, "duration": 100, "on_frame": []}
+                    ]
                 }
             }
         }
     }
+    
 }

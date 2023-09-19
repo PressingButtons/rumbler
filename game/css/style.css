@@ -12,19 +12,18 @@ body, html, main, article {
 
 body {
   font-family: var(--font-families);
-  background-color: var(--background-color-1);
 }
 
 article {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--background-color-1);
 }
 
 section.game-container {
   background-color: black;
   position: relative;
-  height: auto;
 }
 
 canvas {
@@ -32,38 +31,44 @@ canvas {
   display: block;
 }
 
-:root {
-  --prompt-background: rgb(44, 43, 44);
-  --prompt-wrapper_background: rgba(0, 0, 0, 0.6);
+.wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
 }
 
-.game-prompt {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--prompt-wrapper_background);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+aside {
+  background-color: #333;
 }
-.game-prompt .game-prompt_wrapper {
-  padding: 12px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-  background-color: var(--prompt-background);
-  color: white;
-  border-radius: 8px;
+
+#sandbox-user-interface {
+  width: 320px;
+  color: #555;
+  background-color: #AAA;
+}
+#sandbox-user-interface header {
+  padding: 6px;
+  background-color: #666;
+  color: #AAA;
+}
+#sandbox-user-interface div.content {
+  display: grid;
+  padding: 4px;
+}
+#sandbox-user-interface div.content.col-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+#sandbox-user-interface div.content.col-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+#sandbox-user-interface div.content .span-2 {
+  grid-column: span 2;
+}
+#sandbox-user-interface div.content .span-3 {
+  grid-column: span 3;
+}
+#sandbox-user-interface div.content .centered {
   text-align: center;
-}
-.game-prompt .game-prompt_description {
-  text-align: center;
-}
-.game-prompt .game-prompt_options {
-  display: inline-block;
-}
-.game-prompt .game-prompt_options > input {
-  margin: 4px;
 }
 
 /*# sourceMappingURL=style.css.map */

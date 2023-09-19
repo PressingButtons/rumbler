@@ -1,6 +1,6 @@
-import * as ini from './sequence/sequences/init.js'
-import * as battle from './sequence/sequences/battle/seq.battle.js';
-import * as test from './sequence/sequences/test.js'
+import * as ini from './sequences/init.js'
+import * as battle from './sequences/battle/seq.battle.js';
+import * as test from './sequences/test.js'
 
 const sequences = { current: null};
 const system = { };

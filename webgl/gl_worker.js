@@ -129,7 +129,7 @@ const setBuffer = name => {
 }
 
 const setProjection = (matrix, rect) => {
-    mat4.ortho( matrix, rect.left, rect.right, rect.bottom, rect.top, 1, -1 );
+    mat4.ortho( matrix, ...rect, 1, -1 );
 };
 
 const setTexture = ( shader, texture, index ) => {
@@ -159,7 +159,6 @@ const setUniform = ( shader, uniform_method, uniform_name, ...value ) => {
 
 const useShader = (name, shader) => {
     if( shader && shader == shaders[name]) return 
-    shader;
     shader = shaders[name];
     if(!shader) return false;
     gl.useProgram( shader.program );
@@ -231,6 +230,7 @@ const debug_report_buffer = ( ) => {
 
 
 const render = object => {
+    if( !object ) return;
     const shader = useShader( object.shader );
     if( !shader ) throw `Invalid shader [${object.shader}] `;
     switch( object.shader ) {
@@ -294,6 +294,15 @@ const renderBoxes = object => {
     for( const hitbox of object.hitboxes ) renderHitbox( shader, object, hitbox);
 }
 
+const renderHorizon = ( ) => {
+    const shader = useShader('horizon');
+    setBuffer( buffers.horizon_position );
+    setAttribute( shader, 'a_position', 2, 0, 0);
+    setBuffer( buffers.horizon_color );
+    setAttribute( shader,'a_position', 4, 0, 0);
+    draw(0, 4);
+}
+
 const renderBox = (shader, object, box, color) => {
     setBuffer('position');
     // ==========================================
@@ -309,7 +318,6 @@ const renderBox = (shader, object, box, color) => {
     gl.uniform4fv( shader.uniforms.u_tint, color );
     // ==========================================
     draw(0, 4);
-
 }
 
 const renderHurtbox = (shader, gameobject, box) => {
@@ -348,7 +356,6 @@ Messenger.setRoute('fill', function( message ) {
     return true;
 })
 
-
 Messenger.setRoute('texture', function(message) {
     const texture = createTexture( message.content.bitmap );
     textures[ message.content.name] = texture;
@@ -356,9 +363,13 @@ Messenger.setRoute('texture', function(message) {
 });
 
 Messenger.setRoute('render', function( message ) {
+    if( buffers.horizon_position ) renderHorizon( );
     fill([0, 0, 0.2, 1]);
     const detail = JSON.parse(message.content);
     setProjection( m0, detail.camera );
     for( const object of detail.objects ) shader = render( object, shader );
+});
 
+Messenger.setRoute('buffer', function( message ) {
+    buffers[message.content.name] = createBuffer( message.content.data );
 });

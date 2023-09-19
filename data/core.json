@@ -1,0 +1,29 @@
+{
+    "settings": {
+        "default": {
+            "difficulty": 5,
+            "match": { "time": 90, "downs": 3 },
+            "keyboard": {
+                "left": "a", "right": "d", "down": "s", "up": "W", 
+                "a": "y", "b": "u", "c": "h", "d": "j", "e": "i", "f": "k",
+                "menu": "backspace", "confirm": "y", "cancel": "h"
+            },
+            "gamepad": {
+                "left": "11", "right": "12", "down": "13", "up": "14", 
+                "a": "1", "b": "2", "c": "0", "d": "3", "e": "7", "f": "9",
+                "menu": "9", "cancel": "10"
+            }
+        },
+        "resolution": 
+            [[800, 450], [1024, 576], [1280, 720], [2048, 1536]]
+    },
+
+    "textures": {
+        "palette": "palette.webp",
+        "garf"  : "garf-palette.webp",
+        "dusk"  : "skybox/dusk.webp",
+        "summit": "mainground/summit.webp",
+        "grid"  : "grid.webp",
+        "sandbox": "mainground/sandbox.webp"
+    }
+}
